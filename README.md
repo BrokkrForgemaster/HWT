@@ -1,5 +1,5 @@
 <p style="text-align: center;">
-  [![Imgur](https://imgur.com/U8K7mKL)]
+  <blockquote class="imgur-embed-pub" lang="en" data-id="U8K7mKL"><a href="https://imgur.com/U8K7mKL">View post on imgur.com</a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 </p>
 
 # House Wolf App
