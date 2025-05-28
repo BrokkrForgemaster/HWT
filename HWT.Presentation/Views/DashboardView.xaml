@@ -1,0 +1,32 @@
+<UserControl x:Class="HWT.Presentation.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent">
+
+    <Border Margin="20" Background="{DynamicResource CardBackground}" CornerRadius="20" Effect="{DynamicResource CardShadow}">
+        <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled"
+                      CanContentScroll="True">
+
+            <DockPanel LastChildFill="True" Margin="20">
+                <TextBlock Text="📡 Star Citizen News Feed"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           Margin="0 0 0 20"
+                           DockPanel.Dock="Top" />
+
+                <!-- News Feed Panel -->
+                <ItemsControl x:Name="NewsFeedPanel">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </DockPanel>
+
+        </ScrollViewer>
+    </Border>
+</UserControl>

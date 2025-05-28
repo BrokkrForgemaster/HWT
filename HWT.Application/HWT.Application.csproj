@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\HWT.Domain\HWT.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationFramework">
+      <HintPath>..\..\..\Users\chada\.dotnet\shared\Microsoft.WindowsDesktop.App\9.0.2\PresentationFramework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
