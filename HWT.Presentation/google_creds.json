@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "wolf-operations-bot",
+  "private_key_id": "631c71eebdfe564a9b641cec6ad6f8c7b2b007b2",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDKCVN5rCXJMlCC\nxw47pi9xjNgT9PptyvhJizpPwQyZFJjtxRCcXo/F3autwPjPNK9VX6a2iPdP16Tc\nJcPmjtIcMHICilAGj7Q31aR6Qu2JmdpZ3xqPycrmn91/LG7E3Y8wgSWasaRCOvY8\nRAgU9KtIJ3EqevY8aBzVzNgtZFngHbsfAJeBHu9Ju038AlSlMHeZk453yi89B5c8\n9/wcw0myKf7saNiN0vxgSuKEUCcfyr4C3EX6YQJ3ZSwxNyX2PS/TQ2trJKKNhO/B\nfJDl7FcwCGw/TsjBaArsXasiBA1RkE3IMm4WF6I1E7ctNNaOKqtwkr0beAxjftzu\nGNYY7+vfAgMBAAECggEARBpzsIqGbDVRLVxDIHlK+dhTyBpmxlbKbiQIAnVdNUbb\nrB6nFEbN6RFpexcW5+XnCnzFOjeeQiQ7VthGGnRfQBBWhiOwiR2szrtuB6aC4sTh\ndTT/A6QuiKIv7FwCdMsIpv2JuwURjR/J/BOks8er6xUckQjE8yTXP3yfDGIM574U\neA9Pj+iHbJOc+FVyhv4m08WOKsgspsCT5JrujFt8uuX4bDICHGSDiZ3k2SDS2xl6\nHdCiB0dfxBh5pRurKW0eBAR0aOoZrz1+WqrxwSWpjoP7HSTrEWP41RjTWWGWRfjL\nU9EdOXPif9T294Asr4/aUsDb4OC0iOAQgjQjGXhrRQKBgQDrhSfSwrUa84jsgUiE\n5htNhSoNH2lOWOzy1Epwl1tFRM8cwLu8Ps4dD8nZMmu5IGnxA6l8OP0RNRuY9lNm\nPwks3xjWA4wxtzmMjLsmo208UhmPg30HjoMYHgPQOxZwY6ESNT0Lb+1EifZu2W4x\nRPW/uRBQGi9lwJvRcSpK43Jn2wKBgQDbmsyuP6Y9kVA7OjubPD6QsCQds1GDanpR\neGNAYU2PfIt2kRdCrCVZVhuTnOIVUHB1rTiGrCxwvCPV4N/6x4iQtdQA4u2fzkd5\ntVuIZkajpVMNUkedj8XlN9eQbCnzZ8t9yCGrRvM2arI4xr2TZB6qwhThnqrihGcv\no9Zfhq69TQKBgAq862/kiLVN3TRLQK8ufpguNhibEgYMb+EyZKJ1hCfIV1kMQIL4\nqhURHzbT4a1zGOFwNU4AmykprrRupqbGwPhWw58eUkoB/JG36OB+GwDhDWFJsW2i\nxb9XvvzDdOZy5GkcHEhlNgAl+iJbr3Z3mmy/V0sPppGREomeCzuW2yR5AoGAHVYx\nr7l7CNCHylG+Mr+6j/On73vMEOVBj+6oO6qEBP4bV2yMkfCTULrrFi4oGbbUPzQz\nz/HiQfEwTFstMMBFIyfXOYMXQXj6HW033CHln+jvDmGGhar2QefS2U1J0WV1TslU\njh/9T7CzPFh4bN88JY2l4noi0/3iFwApHDvOziUCgYBokBQEAhCQQ+6pAcqJseTt\nuL9GgQ+hz7hi30APrsvIf2o3YhJH7SeUNzjcTEF7r+266U46voIswOiLlOhM024h\n1R73e2n9GB9wLPRKDYycKq4MT/wvxfTF/DMPMfr55LdaiuPoXGpSWQLXqbubMlIw\nri9h2YALDYc1rSqh2k7qMA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "house-wolf-application@wolf-operations-bot.iam.gserviceaccount.com",
+  "client_id": "107233618735293460184",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/house-wolf-application%40wolf-operations-bot.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
