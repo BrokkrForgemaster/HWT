@@ -1,5 +1,5 @@
 <p style="text-align: center;">
-  [Imgur](https://imgur.com/U8K7mKL)
+  [![Imgur](https://imgur.com/U8K7mKL)]
 </p>
 
 # House Wolf App
