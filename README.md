@@ -1,5 +1,5 @@
 <p style="text-align: center;">
-  <img src="[House Wolf](https://imgur.com/a/Xz7Dz7F)" alt="HWT Hero" width="700" style="border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"/>
+  [Imgur](https://imgur.com/U8K7mKL)
 </p>
 
 # House Wolf App
