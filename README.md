@@ -1,5 +1,5 @@
 <p style="text-align: center;">
-  ![UI Screenshot](https://i.imgur.com/U8K7mKL.png)
+  ![UI Screenshot](HWT.Presentation/Assets/HWdivisionsandunits.png)
 </p>
 
 # House Wolf App
