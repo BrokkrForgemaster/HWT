@@ -1,124 +1,118 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 using HWT.Application.Interfaces;
 using HWT.Domain.Entities;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace HWT.Infrastructure.Services;
-
-/// <summary name="SettingsService">
-/// This service provides access to application settings and allows
-/// saving changes to the settings file.
-/// </summary>
-public class SettingsService : ISettingsService, IDisposable
+namespace HWT.Infrastructure.Services
 {
-    #region Fields
-
-    private readonly IOptionsMonitor<AppSettings> _opts;
-    private readonly IConfigurationRoot _configRoot;
-    private readonly ILogger<SettingsService> _logger;
-    private readonly IDisposable _subscription;
-
-    private static readonly string JsonPath =
-        Path.Combine(AppContext.BaseDirectory, "appsettings.json");
-
-    #endregion
-
-    #region Constructor
-
-    public SettingsService(
-        IOptionsMonitor<AppSettings> opts,
-        IConfiguration configuration,
-        ILogger<SettingsService> logger)
-    {
-        _opts = opts;
-        _logger = logger;
-        _configRoot = (IConfigurationRoot)configuration;
-        _subscription = _opts.OnChange(s =>
-            _logger.LogInformation("AppSettings reloaded: {@Settings}", s)
-        );
-    }
-
-    #endregion
-
-    #region Methods
-
-    /// <summary name="GetSettings">
-    /// Retrieves the current application settings from the configuration.
+    /// <summary>
+    /// This service provides per-user application settings stored in AppData
+    /// and handles loading and saving of those settings.
     /// </summary>
-    public AppSettings GetSettings() =>
-        _opts.CurrentValue;
-
-    /// <summary name="SaveAsync">
-    /// Saves the provided application settings to the appsettings.json file.
-    /// This method reads the existing file, updates the AppSettings section,
-    /// and writes it back to the same file.
-    /// <param name="newSettings">The new settings to save.</param>
-    /// </summary>
-    public async Task SaveAsync(AppSettings newSettings)
+    public class SettingsService : ISettingsService, IDisposable
     {
-        _logger.LogInformation("Saving AppSettings to {Path}", JsonPath);
+        private readonly ILogger<SettingsService> _logger;
+        private readonly string _userConfigPath;
+        private readonly string _defaultConfigPath;
 
-        try
+        private readonly FileSystemWatcher _watcher;
+
+        public SettingsService(ILogger<SettingsService> logger)
         {
-            var text = await File.ReadAllTextAsync(JsonPath);
-            var root = JsonNode.Parse(text)?.AsObject();
+            _logger = logger;
 
-            if (root == null)
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var userFolder = Path.Combine(appData, "HouseWolf");
+            Directory.CreateDirectory(userFolder);
+
+            _userConfigPath = Path.Combine(userFolder, "settings.json");
+
+            var exeFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+            _defaultConfigPath = Path.Combine(exeFolder, "appsettings.json");
+
+            EnsureUserConfigExists();
+
+            // Watch for external changes
+            _watcher = new FileSystemWatcher(userFolder, "settings.json")
             {
-                _logger.LogError("Failed to parse JSON from {Path}", JsonPath);
-                throw new JsonException("Failed to parse JSON from the settings file.");
+                NotifyFilter = NotifyFilters.LastWrite
+            };
+            _watcher.Changed += OnUserConfigChanged;
+            _watcher.EnableRaisingEvents = true;
+        }
+
+        private void EnsureUserConfigExists()
+        {
+            if (!File.Exists(_userConfigPath))
+            {
+                try
+                {
+                    File.Copy(_defaultConfigPath, _userConfigPath);
+                    _logger.LogInformation("Copied default settings to {Path}", _userConfigPath);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to copy default settings");
+                }
             }
-
-            root["AppSettings"] = JsonSerializer.SerializeToNode(
-                newSettings,
-                new JsonSerializerOptions { WriteIndented = true }
-            );
-
-            var output = root.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
-            await File.WriteAllTextAsync(JsonPath, output);
-
-            _logger.LogInformation("AppSettings successfully saved to {Path}", JsonPath);
-            _configRoot.Reload();
-            _logger.LogInformation("Configuration reloaded after saving AppSettings");
         }
-        catch (JsonException jex)
+
+        private void OnUserConfigChanged(object sender, FileSystemEventArgs e)
         {
-            _logger.LogError(
-                jex,
-                "JSON parsing or serialization error when saving AppSettings to {Path}",
-                JsonPath
-            );
-            throw;
+            _logger.LogInformation("User settings changed on disk: {Path}", e.FullPath);
         }
-        catch (IOException ioex)
+
+        public AppSettings GetSettings()
         {
-            _logger.LogError(
-                ioex,
-                "I/O error when saving AppSettings to {Path}",
-                JsonPath
-            );
-            throw;
+            try
+            {
+                var json = File.ReadAllText(_userConfigPath);
+                var node = JsonNode.Parse(json)?["AppSettings"];
+                if (node == null)
+                {
+                    _logger.LogWarning("AppSettings section missing in user config");
+                    return new AppSettings();
+                }
+                return node.Deserialize<AppSettings>() ?? new AppSettings();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load user settings");
+                return new AppSettings();
+            }
         }
-        catch (Exception ex)
+
+        public async Task SaveAsync(AppSettings newSettings)
         {
-            _logger.LogError(
-                ex,
-                "Unexpected error when saving AppSettings to {Path}",
-                JsonPath
-            );
-            throw;
+            try
+            {
+                _logger.LogInformation("Saving user settings to {Path}", _userConfigPath);
+                var text = File.ReadAllText(_userConfigPath);
+                var root = JsonNode.Parse(text)?.AsObject() ?? new JsonObject();
+
+                root["AppSettings"] = JsonSerializer.SerializeToNode(
+                    newSettings, new JsonSerializerOptions { WriteIndented = true }
+                );
+
+                var output = root.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
+                await File.WriteAllTextAsync(_userConfigPath, output);
+                _logger.LogInformation("User settings saved successfully");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving user settings");
+                throw;
+            }
+        }
+
+        public void Dispose()
+        {
+            _watcher.Dispose();
         }
     }
-
-
-    /// <summary name="Dispose">
-    /// Disposes the SettingsService, releasing any resources it holds,
-    /// including the subscription to changes in AppSettings.
-    /// </summary>
-    public void Dispose() => _subscription.Dispose();
-
-    #endregion
 }
