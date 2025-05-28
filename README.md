@@ -1,5 +1,5 @@
 <p style="text-align: center;">
-  ![UI Screenshot](HWT.Presentation/Assets/HWdivisionsandunits.png)
+  <img src="HWT.Presentation/Assets/HWdivisionsandunits.png" alt="HWT Hero" width="700" style="border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"/>
 </p>
 
 # House Wolf App
