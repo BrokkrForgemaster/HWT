@@ -49,8 +49,8 @@
 ## 📸 Screenshots
 
 <p style="text-align: center;">
-  <img src="Assets/killtracker.png" alt="Kill Tracker" width="350" style="margin: 8px; border-radius:12px;" />
-  <img src="Assets/comingsoon.jpg" alt="Mission Planner" width="350" style="margin: 8px; border-radius:12px;" />
+  <img src="HWT.Presentation/Assets/killtracker.png" alt="Kill Tracker" width="350" style="margin: 8px; border-radius:12px;" />
+  <img src="HWT.Presentation/Assets/comingsoon.jpg" alt="Mission Planner" width="350" style="margin: 8px; border-radius:12px;" />
 </p>
 
 
