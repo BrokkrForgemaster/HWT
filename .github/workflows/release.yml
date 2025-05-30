@@ -1,0 +1,51 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'    # e.g. v0.1.1
+
+jobs:
+  release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish main app (for updater)
+        run: |
+          dotnet publish src/HWT/HWT.csproj \
+            -c Release \
+            -o artifacts/app
+          cd artifacts/app
+          Compress-Archive -Path * -DestinationPath ../HouseWolfApp-${{ github.ref_name }}.zip
+
+      - name: Publish standalone installer EXE
+        run: |
+          dotnet publish src/HWT.Installer/HWT.Installer.csproj \
+            -c Release \
+            -r win-x64 \
+            -p:PublishSingleFile=true \
+            -p:SelfContained=true \
+            -o artifacts/installer
+          mv artifacts/installer/HWT.Installer.exe artifacts/HouseWolfInstaller-${{ github.ref_name }}.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/HouseWolfApp-${{ github.ref_name }}.zip
+            artifacts/HouseWolfInstaller-${{ github.ref_name }}.exe
