@@ -1,3 +1,4 @@
+using HWT.Application;
 using HWT.Application.Interfaces;
 using HWT.Domain.Entities;
 using HWT.Infrastructure;
@@ -29,19 +30,17 @@ namespace HWT.Presentation
                 .ConfigureServices((ctx, services) =>
                 {
                     var configuration = ctx.Configuration;
-                    services.AddInfrastructure(configuration);
-                    services.AddHttpClient();
-
-                    // 5) Navigation
-                    services.AddSingleton<INavigationService, NavigationService>();
-                    services.AddSingleton<IThemeManager>(sp =>
-                        new ThemeManager(System.Windows.Application.Current));
-
-                    // 6) Views & MainWindow
-                    services.AddSingleton<MainWindow>();
-                    services.AddSingleton<DashboardView>();
-                    services.AddSingleton<KillTracker>();
-                    services.AddSingleton<SettingsForm>();
+                    services.AddInfrastructure(configuration)
+                        .AddApplication()
+                        .AddHttpClient()
+                        .AddSingleton<INavigationService, NavigationService>()
+                        .AddSingleton<IThemeManager>(sp =>
+                            new ThemeManager(System.Windows.Application.Current))
+                        .AddSingleton<MainWindow>()
+                        .AddSingleton<DashboardView>()
+                        .AddSingleton<KillTracker>()
+                        .AddSingleton<SettingsForm>();
+                    
                 })
 
                 .Build();

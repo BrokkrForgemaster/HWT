@@ -3,7 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using HWT.Domain.Entities;
 using HWT.Application.Interfaces;
+using HWT.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace HWT.Presentation.Views
 {
@@ -16,24 +18,25 @@ namespace HWT.Presentation.Views
         private AppSettings                    _current;
 
         public SettingsForm(
-            ISettingsService   settingsService,
+            IOptions<AppSettings> settings,
             IThemeManager      themeManager,
             INavigationService navigationService,
-            ILogger<SettingsForm> logger)
+            ILogger<SettingsForm> logger,
+            ISettingsService settingsService)
         {
             InitializeComponent();
-
-            _settingsService   = settingsService;
+            _settingsService = settingsService;
             _themeManager      = themeManager;
             _nav = navigationService;
             _logger            = logger;
-
-            _current = _settingsService.GetSettings();
+            
+            _current = settings.Value;
 
             // Populate UI...
             CmbThemes.ItemsSource  = _themeManager.AvailableThemes;
             CmbThemes.SelectedItem = _current.Theme ?? _themeManager.CurrentTheme;
-
+            
+            TxtPlayerName.Text           = _current.PlayerName;
             TxtDiscordToken.Text         = _current.DiscordToken;
             TxtGoogleSheetsKey.Text      = _current.GoogleSheetsId;
             TxtKillTrackerSheetsId.Text  = _current.KillSheetKey;
