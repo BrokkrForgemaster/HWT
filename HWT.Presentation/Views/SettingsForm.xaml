@@ -10,215 +10,176 @@
       HorizontalAlignment="Stretch"
       VerticalAlignment="Center">
       
+        <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <TextBlock Grid.Row="0"
+               Text="Settings"
+               FontSize="36"
+               FontWeight="Bold"
+               Foreground="White"
+               HorizontalAlignment="Center"
+               Margin="0,0,0,24"/>
+
+    <!-- Inputs -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
       <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="1.5*"/>
+          <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="*"/>
-          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/> <!-- Theme -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Player Name -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Discord Bot Token -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Google Sheets Key -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Kill Tracker Sheet ID -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Star Citizen API Key -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Trading Website URL -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Trading Website API Key -->
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/> <!-- Game Log File Location -->
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <TextBlock
-          Text="Settings"
-          FontSize="36"
-          FontWeight="Bold"
-          Foreground="White"
-          HorizontalAlignment="Center"
-          Margin="0,0,0,24"
-          Grid.Row="0"/>
+        <!-- Theme -->
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="Theme:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <ComboBox Grid.Row="0" Grid.Column="1"
+                  x:Name="CmbThemes" FontSize="22" Height="40"
+                  Width="600" HorizontalAlignment="Left"
+                  VerticalContentAlignment="Center"
+                  SelectionChanged="cmbThemes_SelectionChanged"
+                  Padding="4,0"/>
 
-        <!-- Inputs -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-          <Grid>
-            <Grid.ColumnDefinitions>
-              <!-- Label column -->
-              <ColumnDefinition Width="1.5*"/>
-              <!-- Input column -->
-              <ColumnDefinition Width="3*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>    <!-- vertical spacer -->
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>
-              <RowDefinition Height="Auto"/>
-              <RowDefinition Height="24"/>
-              <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <!-- Player Name -->
+        <TextBlock Grid.Row="2" Grid.Column="0"
+                   Text="Player Name:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="2" Grid.Column="1"
+                 x:Name="TxtPlayerName" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Theme -->
-            <TextBlock Grid.Row="0" Grid.Column="0"
-                       Text="Theme:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <ComboBox Grid.Row="0" Grid.Column="1"
-                      x:Name="CmbThemes"
-                      FontSize="22"
-                      Height="40"
-                      Width="600"
-                      HorizontalAlignment="Left"
-                      VerticalContentAlignment="Center"
-                      SelectionChanged="cmbThemes_SelectionChanged"
-                      Padding="4,0"/>
+        <!-- Discord Bot Token -->
+        <TextBlock Grid.Row="4" Grid.Column="0"
+                   Text="Discord Bot Token:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="4" Grid.Column="1"
+                 x:Name="TxtDiscordToken" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Discord Bot Token -->
-            <TextBlock Grid.Row="2" Grid.Column="0"
-                       Text="Discord Bot Token:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="2" Grid.Column="1"
-                     x:Name="TxtDiscordToken"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
+        <!-- Google Sheets Key -->
+        <TextBlock Grid.Row="6" Grid.Column="0"
+                   Text="Google Sheets Key:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="6" Grid.Column="1"
+                 x:Name="TxtGoogleSheetsKey" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Google Sheets Key -->
-            <TextBlock Grid.Row="4" Grid.Column="0"
-                       Text="Google Sheets Key:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="4" Grid.Column="1"
-                     x:Name="TxtGoogleSheetsKey"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
+        <!-- Kill Tracker Sheet ID -->
+        <TextBlock Grid.Row="8" Grid.Column="0"
+                   Text="Kill Tracker Sheet ID:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="8" Grid.Column="1"
+                 x:Name="TxtKillTrackerSheetsId" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Kill Tracker Sheet ID -->
-            <TextBlock Grid.Row="6" Grid.Column="0"
-                       Text="Kill Tracker Sheet ID:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="6" Grid.Column="1"
-                     x:Name="TxtKillTrackerSheetsId"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
+        <!-- Star Citizen API Key -->
+        <TextBlock Grid.Row="10" Grid.Column="0"
+                   Text="Star Citizen API Key:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="10" Grid.Column="1"
+                 x:Name="TxtApiKey" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Star Citizen API Key -->
-            <TextBlock Grid.Row="8" Grid.Column="0"
-                       Text="Star Citizen API Key:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="8" Grid.Column="1"
-                     x:Name="TxtApiKey"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
+        <!-- Trading Website URL -->
+        <TextBlock Grid.Row="12" Grid.Column="0"
+                   Text="Trading Website URL:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="12" Grid.Column="1"
+                 x:Name="TrdUrl" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Trading Website URL -->
-            <TextBlock Grid.Row="10" Grid.Column="0"
-                       Text="Trading Website URL:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="10" Grid.Column="1"
-                     x:Name="TrdUrl"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
+        <!-- Trading Website API Key -->
+        <TextBlock Grid.Row="14" Grid.Column="0"
+                   Text="Trading Website API Key:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="14" Grid.Column="1"
+                 x:Name="TrdApiKey" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
 
-            <!-- Trading Website API Key -->
-            <TextBlock Grid.Row="12" Grid.Column="0"
-                       Text="Trading Website API Key:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="12" Grid.Column="1"
-                     x:Name="TrdApiKey"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
-
-            <!-- Game Log File Location -->
-            <TextBlock Grid.Row="14" Grid.Column="0"
-                       Text="Game Log File Location:"
-                       FontSize="22"
-                       Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Margin="0,0,16,0"/>
-            <TextBox Grid.Row="14" Grid.Column="1"
-                     x:Name="TxtGameLog"
-                     FontSize="22"
-                     Height="40"
-                     Width="600"
-                     HorizontalAlignment="Left"
-                     VerticalContentAlignment="Center"
-                     Padding="8,0"/>
-          </Grid>
-        </ScrollViewer>
-
-        <!-- Buttons -->
-        <StackPanel
-          Grid.Row="2"
-          Orientation="Horizontal"
-          HorizontalAlignment="Right"
-          Margin="0,24,0,0">
-          <Button
-            Content="Cancel"
-            Click="Cancel_Click"
-            Width="120"
-            Height="40"
-            FontSize="16"
-            Margin="0,0,16,0"
-            Background="#FF0000"
-            Foreground="White"/>
-          <Button
-            Content="Save"
-            Click="Save_Click"
-            Width="120"
-            Height="40"
-            FontSize="16"
-            Margin="16,0,16,0"
-            Background="#0078D7"
-            Foreground="White"/>
-        </StackPanel>
+        <!-- Game Log File Location -->
+        <TextBlock Grid.Row="16" Grid.Column="0"
+                   Text="Game Log File Location:" FontSize="22" Foreground="White"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"
+                   Margin="0,0,16,0"/>
+        <TextBox Grid.Row="16" Grid.Column="1"
+                 x:Name="TxtGameLog" FontSize="22" Height="40"
+                 Width="600" HorizontalAlignment="Left"
+                 VerticalContentAlignment="Center"
+                 Padding="8,0"/>
       </Grid>
+    </ScrollViewer>
+
+    <!-- Buttons -->
+    <StackPanel Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Right"
+                Margin="0,24,0,0">
+      <Button
+        Content="Cancel"
+        Click="Cancel_Click"
+        Width="120"
+        Height="40"
+        FontSize="16"
+        Margin="0,0,16,0"
+        Background="#FF0000"
+        Foreground="White"/>
+      <Button
+        Content="Save"
+        Click="Save_Click"
+        Width="120"
+        Height="40"
+        FontSize="16"
+        Margin="16,0,16,0"
+        Background="#0078D7"
+        Foreground="White"/>
+    </StackPanel>
+  </Grid>
     </Border>
   </Grid>
 </UserControl>

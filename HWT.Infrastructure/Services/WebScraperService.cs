@@ -1,7 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using HtmlAgilityPack;
-using HWT.Application.Interfaces;
+﻿using HtmlAgilityPack;
 using HWT.Domain.Entities;
+using HWT.Application.Interfaces;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 
 namespace HWT.Infrastructure.Services;
@@ -12,8 +12,17 @@ namespace HWT.Infrastructure.Services;
 /// </summary>
 public class WebScraperService(HttpClient httpClient, ILogger<WebScraperService> logger) : IWebScraperService
 {
+    #region Fields
     private const string CommLinkUrl = "https://robertsspaceindustries.com/comm-link";
+    #endregion
 
+    #region Methods
+    /// <summary name="ScrapeNewsAsync">
+    /// Asynchronously scrapes the latest news articles from the RSI Comm-Link page.
+    /// This method fetches the HTML content, parses it using HtmlAgilityPack,
+    /// and extracts the title, link, published date, summary, and image URL of each article.
+    /// It returns a list of RssFeedItem objects representing the articles found.
+    /// </summary>
     public async Task<List<RssFeedItem>> ScrapeNewsAsync()
     {
         var items = new List<RssFeedItem>();
@@ -76,6 +85,10 @@ public class WebScraperService(HttpClient httpClient, ILogger<WebScraperService>
         return items;
     }
 
+    /// <summary name="ParseRelativeDate">
+    /// Parses a relative date string (e.g., "2 days ago") into a DateTime object.
+    /// If the string is empty or cannot be parsed, it returns the current UTC date and time.
+    /// </summary>
     private DateTime ParseRelativeDate(string text)
     {
         logger.LogDebug("Parsing relative date: {Text}", text);
@@ -101,6 +114,10 @@ public class WebScraperService(HttpClient httpClient, ILogger<WebScraperService>
         return DateTime.UtcNow;
     }
 
+    /// <summary name="ExtractBackgroundImageUrl">
+    /// Extracts the background image URL from a style attribute string.
+    /// If the style is empty or the URL cannot be extracted, it returns an empty string.
+    /// </summary>
     private string ExtractBackgroundImageUrl(string style)
     {
         logger.LogDebug("Extracting image URL from style: {Style}", style);
@@ -119,4 +136,5 @@ public class WebScraperService(HttpClient httpClient, ILogger<WebScraperService>
             return string.Empty;
         }
     }
+    #endregion
 }

@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
 using HWT.Application.Interfaces;
+using HWT.Application.Services;
 using HWT.Presentation.Controls;
 using Microsoft.Extensions.Logging;
 
@@ -127,4 +129,7 @@ public partial class DashboardView : UserControl
     {
         return FindVisualChild<WrapPanel>(NewsFeedPanel);
     }
+    
+    
+    
 }
