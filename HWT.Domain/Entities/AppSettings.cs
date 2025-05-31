@@ -16,9 +16,11 @@ public class AppSettings
     public string? StarCitizenApiUrl         { get; set; }
     public string? KillSheetKey              { get; set; }
     public string? Theme                     { get; set; }
+    public string? PlayerName                { get; set; } 
     public string? DiscordWebhookUrl         { get; set; }
     public string? RsiToken                  { get; set; }
     public bool   ShowApiSettings            { get; set; } = false;
     public string? TradingApiUrl             { get; set; }  
-    public string? TradingApiKey             { get; set; }   
+    public string? TradingApiKey             { get; set; }
+    public string? ThemeKey { get; set; }
 }

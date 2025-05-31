@@ -1,7 +1,7 @@
 namespace HWT.Domain.Entities;
 
 
-// <summary name="KillEntry">
+/// <summary name="KillEntry">
 /// This class represents a kill entry in the game log.
 /// It contains information about the time of the kill,
 /// the type of kill, the attacker, the target, the weapon used,

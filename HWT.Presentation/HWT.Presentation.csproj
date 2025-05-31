@@ -85,9 +85,6 @@
     </Content>
     <None Remove="GoogleApiCredentials.json" />
     <None Remove="google_creds.json" />
-    <Content Include="google_creds.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Remove="Assets\HWdivisionsandunits.png" />
     <Content Include="Assets\HWdivisionsandunits.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -96,6 +93,11 @@
     <Content Include="Assets\comingsoon.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Update="Assets\google_creds.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="Assets\google_creds.json" />
+    <None Remove="google_credentials.json" />
   </ItemGroup>
 
   <ItemGroup>

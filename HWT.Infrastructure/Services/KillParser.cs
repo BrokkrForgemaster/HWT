@@ -11,8 +11,14 @@ namespace HWT.Infrastructure.Services;
 /// </summary>
 public static class KillParser
 {
+    #region Fields
     private static readonly ILogger _log = Log.ForContext(typeof(KillParser));
+    #endregion
 
+    #region Methods
+    /// <summary name="IsRealPlayer">
+    /// Checks if the given player name is a real player (not an NPC).
+    /// </summary>
     private static bool IsRealPlayer(string name)
     {
         return !string.IsNullOrWhiteSpace(name) &&
@@ -21,6 +27,9 @@ public static class KillParser
                !name.Contains("_");
     }
 
+    /// <summary name="ClassifyKill">
+    /// Classifies the type of kill based on the weapon class used.
+    /// </summary>
     private static string ClassifyKill(string weaponClass)
     {
         var wc = weaponClass.ToLowerInvariant();
@@ -34,7 +43,11 @@ public static class KillParser
 
         return "Unknown";
     }
-
+    
+    /// <summary name="ExtractKill">
+    /// Extracts kill information from a log line and returns a KillEntry object.
+    /// If the line does not contain a valid kill message, returns null.
+    /// </summary>
     public static KillEntry? ExtractKill(string line)
     {
         if (!line.Contains("<Actor Death>"))
@@ -78,4 +91,5 @@ public static class KillParser
             return null;
         }
     }
+    #endregion
 }
