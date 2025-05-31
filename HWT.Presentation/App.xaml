@@ -1,7 +1,8 @@
 ﻿<Application x:Class="HWT.Presentation.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:converters="clr-namespace:HWT.Presentation.Converters">
+             xmlns:converters="clr-namespace:HWT.Presentation.Converters"
+             Startup="OnStartup">
     <Application.Resources>
         <ResourceDictionary>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>

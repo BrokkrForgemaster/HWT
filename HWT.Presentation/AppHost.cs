@@ -30,17 +30,19 @@ namespace HWT.Presentation
                 .ConfigureServices((ctx, services) =>
                 {
                     var configuration = ctx.Configuration;
-                    services.AddInfrastructure(configuration)
+
+                    services
+                        .AddInfrastructure(configuration)
                         .AddApplication()
                         .AddHttpClient()
                         .AddSingleton<INavigationService, NavigationService>()
+                        .AddSingleton<ISettingsService, SettingsService>()
                         .AddSingleton<IThemeManager>(sp =>
                             new ThemeManager(System.Windows.Application.Current))
                         .AddSingleton<MainWindow>()
                         .AddSingleton<DashboardView>()
                         .AddSingleton<KillTracker>()
                         .AddSingleton<SettingsForm>();
-                    
                 })
 
                 .Build();

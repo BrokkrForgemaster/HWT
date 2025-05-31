@@ -24,33 +24,61 @@ public class GoogleSheetService : IGoogleSheetService
     #endregion
     
     #region Constructor
-    public GoogleSheetService(IOptions<AppSettings> opts, ILogger<GoogleSheetService> logger)
-    {
-        _logger = logger;
-        var settings = opts.Value;
-        
-        var credPath = settings.GoogleApiCredentialsPath;
-
-        if (string.IsNullOrWhiteSpace(credPath) || !File.Exists(credPath))
+    public GoogleSheetService(
+            IOptions<AppSettings> opts,
+            ILogger<GoogleSheetService> logger
+            )
         {
-            _logger.LogWarning("Google Sheets credentials not found. Logging is disabled.");
-            _sheets = null;
-            return; 
+            _logger = logger;
+            
+            var settings = opts.Value;
+            _spreadsheetId = settings.GoogleSheetsId?.Trim() ?? string.Empty;
+            var credPath = settings.GoogleApiCredentialsPath?.Trim() ?? string.Empty;
+
+            // If the path is empty or the file is missing, we disable Sheets:
+            if (string.IsNullOrWhiteSpace(credPath) || !File.Exists(credPath))
+            {
+                _logger.LogWarning(
+                    "Google Sheets credentials file not found at '{CredPath}'. " +
+                    "Disabling all Google Sheets functionality.",
+                    credPath
+                );
+                _sheets = null;
+                return;
+            }
+
+            // Otherwise, load the service-account JSON and create a real SheetsService:
+            try
+            {
+                var credential = GoogleCredential
+                    .FromFile(credPath)
+                    .CreateScoped(SheetsService.Scope.Spreadsheets);
+
+                _sheets = new SheetsService(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "Kill Tracker",  // or your chosen app name
+                });
+            }
+            catch (IOException ioEx)
+            {
+                _logger.LogError(
+                    ioEx,
+                    "Failed to load Google credentials from '{CredPath}'. " +
+                    "Google Sheets will be disabled.",
+                    credPath
+                );
+                _sheets = null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Unexpected error creating SheetsService. Google Sheets disabled."
+                );
+                _sheets = null;
+            }
         }
-        
-        var creds = GoogleCredential.FromFile(credPath)
-            .CreateScoped(SheetsService.Scope.Spreadsheets);
-
-        _sheets = new SheetsService(new BaseClientService.Initializer
-        {
-            HttpClientInitializer = creds,
-            ApplicationName = "Kill Tracker",
-        });
-
-        _spreadsheetId     = settings.GoogleSheetsId 
-                             ?? throw new ArgumentException("GoogleSheetsId not configured");
-        
-    }
     #endregion
     
     #region Methods

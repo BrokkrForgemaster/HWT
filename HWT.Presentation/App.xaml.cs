@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using HWT.Application.Interfaces;
+using HWT.Domain.Entities;
 using HWT.Presentation.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,30 +16,25 @@ namespace HWT.Presentation
             _host = AppHost.Build();
         }
 
-        protected override async void OnStartup(StartupEventArgs e)
+        private void OnStartup(object sender, StartupEventArgs startupEventArgs)
         {
-            // start the generic host
-            await _host.StartAsync();
-
-            // create a scope to resolve scoped/singleton services
-            using (var scope = _host.Services.CreateScope())
+            var settingsSvc = _host.Services.GetRequiredService<ISettingsService>();
+            var themeMgr = _host.Services.GetRequiredService<IThemeManager>();
+            
+            AppSettings userSettings = settingsSvc.GetSettings();
+            
+            string themeToApply = userSettings.Theme ?? "Dark";
+            try
             {
-                var settingsService = scope.ServiceProvider.GetRequiredService<ISettingsService>();
-                var themeManager    = scope.ServiceProvider.GetRequiredService<IThemeManager>();
-
-                // get the user's saved theme key
-                var userThemeKey = settingsService.GetSettings().ThemeKey;
-                
-                // apply it (you could fallback to a default if null/empty)
-                if (!string.IsNullOrWhiteSpace(userThemeKey))
-                    themeManager.ApplyTheme(userThemeKey);
+                themeMgr.ApplyTheme(themeToApply);
+            }
+            catch (ArgumentException)
+            {
+                themeMgr.ApplyTheme("Dark");
             }
 
-            // now resolve and show the MainWindow
-            var main = _host.Services.GetRequiredService<MainWindow>();
-            main.Show();
-
-            base.OnStartup(e);
+            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
         }
 
         protected override async void OnExit(ExitEventArgs e)
