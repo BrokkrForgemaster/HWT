@@ -13,13 +13,12 @@ public class NavigationService : INavigationService
     public NavigationService(IServiceProvider provider)
     {
         _provider = provider;
-
-        // Map string keys to your view types (UserControl or Page)
+        
         _map = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase)
         {
-            ["Dashboard"] = typeof(Views.DashboardView), // UserControl
-            ["Kill Tracker"] = typeof(Views.KillTracker), // UserControl
-            ["Settings"] = typeof(Views.SettingsForm), // UserControl
+            ["Dashboard"] = typeof(Views.DashboardView), 
+            ["Kill Tracker"] = typeof(Views.KillTracker), 
+            ["Settings"] = typeof(Views.SettingsForm), 
             // other views…
         };
     }
@@ -37,8 +36,7 @@ public class NavigationService : INavigationService
 
         if (!_map.TryGetValue(key, out var viewType))
             throw new ArgumentException($"No view mapped for '{key}'.");
-
-        // Resolve via DI (so constructors get injected)
+        
         var viewObj = _provider.GetService(viewType)
                       ?? Activator.CreateInstance(viewType)
                       ?? throw new InvalidOperationException($"Cannot create {viewType.Name}");
@@ -50,8 +48,6 @@ public class NavigationService : INavigationService
                 break;
 
             case UserControl uc:
-                // Frame.Navigate will wrap a UserControl in a Page internally,
-                // but setting Content is more straightforward:
                 _hostFrame.Content = uc;
                 break;
 

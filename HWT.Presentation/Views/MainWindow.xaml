@@ -7,64 +7,165 @@
         Icon="/Assets/housewolf.ico"
         WindowStartupLocation="CenterScreen">
 
-    <Grid>
+  <Window.Resources>
+    
+    <!-- Core brushes -->
+    <SolidColorBrush x:Key="ForegroundBrush"  Color="White"/>
+    <SolidColorBrush x:Key="AccentBrush"      Color="#66FFFFFF"/> <!-- DodgerBlue for progress bar -->
+    <SolidColorBrush x:Key="GlassBorderBrush" Color="#40FFFFFF"/> <!-- semi-transparent white -->
 
-        <!-- Background Image -->
-        <Image Source="/Assets/Images/dashboard-bg.jpg"
-               Stretch="UniformToFill"
-               Opacity="0.08"
-               IsHitTestVisible="False" />
+    <!-- Frosted-glass button background -->
+    <LinearGradientBrush x:Key="GlassAccentBrush"
+                         StartPoint="0,0" EndPoint="0,1">
+      <GradientStop Color="#80FFFFFF" Offset="0.0"/>
+      <GradientStop Color="#40FFFFFF" Offset="0.5"/>
+      <GradientStop Color="#20FFFFFF" Offset="1.0"/>
+    </LinearGradientBrush>
 
-        <!-- Sidebar -->
-        <Border Style="{DynamicResource SidebarBorderStyle}"
-                Width="300"
-                Panel.ZIndex="10"
-                Margin="20,20,0,20"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Stretch">
-            <DockPanel LastChildFill="True" Margin="16">
-                <!-- Clock at bottom -->
-                <TextBlock x:Name="TxtLocalTime"
-                           DockPanel.Dock="Bottom"
-                           FontSize="14"
-                           FontWeight="Bold"
-                           Foreground="LightGray"
-                           HorizontalAlignment="Center"
-                           Margin="0,8,0,0" />
+    <!-- Sidebar button style -->
+    <Style x:Key="SidebarButtonStyle" TargetType="Button">
+      <Setter Property="Foreground"     Value="{StaticResource ForegroundBrush}"/>
+      <Setter Property="Background"     Value="{StaticResource GlassAccentBrush}"/>
+      <Setter Property="BorderBrush"    Value="{StaticResource GlassBorderBrush}"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding"        Value="12,8"/>
+      <Setter Property="Margin"         Value="0,8"/>
+      <Setter Property="FontSize"       Value="16"/>
+      <Setter Property="Cursor"         Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="12"
+                    Padding="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="True">
+              <ContentPresenter HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background">
+                  <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                      <GradientStop Color="#90FFFFFF" Offset="0.0"/>
+                      <GradientStop Color="#50FFFFFF" Offset="0.5"/>
+                      <GradientStop Color="#30FFFFFF" Offset="1.0"/>
+                    </LinearGradientBrush>
+                  </Setter.Value>
+                </Setter>
+                <Setter TargetName="Bd" Property="Effect">
+                  <Setter.Value>
+                    <DropShadowEffect Color="Black"
+                                      BlurRadius="8"
+                                      Opacity="0.2"
+                                      ShadowDepth="1"/>
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bd" Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                <Setter TargetName="Bd" Property="RenderTransform">
+                  <Setter.Value>
+                    <ScaleTransform ScaleX="0.97" ScaleY="0.97"/>
+                  </Setter.Value>
+                </Setter>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.5"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
 
-                <!-- Logo + Buttons -->
-                <StackPanel>
-                    <Image Source="{DynamicResource SidebarImage}"
-                           Width="150" Height="150"
-                           Margin="0,0,0,20"
-                           Stretch="Uniform"
-                           Effect="{DynamicResource CardShadow}" />
-                    <Button Content="Dashboard" Tag="Dashboard" Click="Navigate_Click"
-                            Margin="0,8" Padding="12,8" FontSize="16" Cursor="Hand"/>
-                    <Button Content="Kill Tracker" Tag="Kill Tracker" Click="Navigate_Click"
-                            Margin="0,8" Padding="12,8" FontSize="16" Cursor="Hand"/>
-                    <Button Content="Settings"  Tag="Settings"  Click="Navigate_Click"
-                            Margin="0,8" Padding="12,8" FontSize="16" Cursor="Hand"/>
-                    <Button Content="Exit"      Click="Exit_Click"
-                            Margin="0,8" Padding="12,8" FontSize="16" Cursor="Hand"/>
-                </StackPanel>
-            </DockPanel>
-        </Border>
 
-        <!-- Main Content with Under-Glow -->
-        <Grid Margin="340,20,20,20">
-          <!-- Glow layer behind -->
-          <Border CornerRadius="24"
-                  Background="{DynamicResource CardBackground}"
-                  Effect="{DynamicResource CardShadow}" />
+  <Grid>
+    <!-- Background Image -->
+    <Image Source="/Assets/dashboard-bg.jpg"
+           Stretch="UniformToFill"
+           Opacity="0.08"
+           IsHitTestVisible="False" />
 
-          <!-- Actual content border above -->
-          <Border Style="{DynamicResource ContentBorderStyle}"
-                  Padding="24">
-            <Frame x:Name="ContentFrame"
-                   NavigationUIVisibility="Hidden"
-                   Background="Transparent" />
-          </Border>
-        </Grid>
+    <!-- Sidebar -->
+    <Border Style="{DynamicResource SidebarBorderStyle}"
+            Width="300" Margin="20,20,0,20"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Stretch">
+      <DockPanel LastChildFill="True" Margin="16">
+        <TextBlock x:Name="TxtLocalTime"
+                   DockPanel.Dock="Bottom"
+                   FontSize="14"
+                   FontWeight="Bold"
+                   Foreground="LightGray"
+                   HorizontalAlignment="Center"
+                   Margin="0,8,0,0" />
+
+        <!-- Time & Update Controls -->
+        <StackPanel Orientation="Vertical" Margin="10" DockPanel.Dock="Bottom">
+          <Button x:Name="UpdateButton"
+                  Content="Update Now"
+                  Width="175" Height="36"
+                  Style="{StaticResource SidebarButtonStyle}"
+                  Click="UpdateButton_Click"
+                  Visibility="Collapsed"/>
+          <ProgressBar x:Name="UpdateProgressBar"
+                       Width="150" Height="16"
+                       Margin="10,4"
+                       Minimum="0" Maximum="100"
+                       Visibility="Collapsed"
+                       Background="#FFDDDDDD"
+                       Foreground="{StaticResource AccentBrush}"/>
+          <TextBlock x:Name="UpdateStatusText"
+                     FontSize="14"
+                     Foreground="LightGray"
+                     VerticalAlignment="Center"
+                     Visibility="Collapsed"/>
+        </StackPanel>
+
+        <!-- Logo + Navigation Buttons -->
+        <StackPanel>
+          <Image Source="{DynamicResource SidebarImage}"
+                 Width="150" Height="150"
+                 Margin="0,0,0,20"
+                 Stretch="Uniform"/>
+          <Button Content="Dashboard"
+                  Tag="Dashboard"
+                  Click="Navigate_Click"
+                  Style="{StaticResource SidebarButtonStyle}"/>
+          <Button Content="Kill Tracker"
+                  Tag="Kill Tracker"
+                  Click="Navigate_Click"
+                  Style="{StaticResource SidebarButtonStyle}"/>
+          <Button Content="Settings"
+                  Tag="Settings"
+                  Click="Navigate_Click"
+                  Style="{StaticResource SidebarButtonStyle}"/>
+          <Button Content="Exit"
+                  Click="Exit_Click"
+                  Style="{StaticResource SidebarButtonStyle}"/>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- Main Content -->
+    <Grid Margin="340,20,20,20">
+      <!-- Glow layer -->
+      <Border CornerRadius="24"
+              Background="{DynamicResource CardBackground}"
+              Effect="{DynamicResource CardShadow}"/>
+      <!-- Content frame -->
+      <Border Style="{DynamicResource ContentBorderStyle}"
+              Padding="24">
+        <Frame x:Name="ContentFrame"
+               NavigationUIVisibility="Hidden"
+               Background="Transparent"/>
+      </Border>
     </Grid>
+  </Grid>
 </Window>
