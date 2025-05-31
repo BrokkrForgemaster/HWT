@@ -1,3 +1,4 @@
+using System.Text.Json;
 using HWT.Application.Interfaces;
 using HWT.Domain.Entities;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ public class KillEventService : IKillEventService, IDisposable
     public event Action<KillEntry>? KillReceived;
     private KillEntry? _lastKill;
     public KillEntry? LastKill => _lastKill;
+    private static readonly string OfflineLogPath = "queued_kills_offline.json";
     #endregion
 
     #region Constructor
@@ -59,31 +61,31 @@ public class KillEventService : IKillEventService, IDisposable
         try
         {
             _logger.LogInformation("Processing kill event: {KillEntry}", entry);
+            _lastKill = entry;
+            KillReceived?.Invoke(entry);
+
             try
             {
-                _lastKill = entry;
-                _logger.LogInformation("Last kill updated: {KillEntry}", _lastKill);
-                KillReceived?.Invoke(entry);
-                try
-                {
-                    _logger.LogInformation("Logging kill to Google Sheets: {KillEntry}", entry);
-                    await _sheet.LogKillAsync(entry);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Failed to log kill to Google Sheets");
-                }
+                _logger.LogInformation("Attempting to log kill to Google Sheets...");
+                await _sheet.LogKillAsync(entry);
+                _logger.LogInformation("Kill successfully logged.");
             }
-            catch (Exception e)
+            catch (FileNotFoundException ex)
             {
-                _logger.LogError(e, "Error processing kill event");
+                _logger.LogWarning("Google credentials missing. Logging to offline queue. Exception: {Message}", ex.Message);
+                SaveKillOffline(entry); // fallback method below
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to log kill to Google Sheets. Logging to offline queue.");
+                SaveKillOffline(entry);
             }
 
-            _logger.LogInformation("Kill event processing completed for: {KillEntry}", entry);
+            _logger.LogInformation("Kill event processing complete.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Raise method for kill event: {KillEntry}", entry);
+            _logger.LogError(ex, "Unexpected error in Raise method.");
         }
     }
     
@@ -92,6 +94,33 @@ public class KillEventService : IKillEventService, IDisposable
     /// and releasing any resources held by the service.
     /// </summary>
     public void Dispose() => _subscription.Dispose();
+    
+    private void SaveKillOffline(KillEntry entry)
+    {
+        try
+        {
+            List<KillEntry> kills = [];
+
+            if (File.Exists(OfflineLogPath))
+            {
+                var json = File.ReadAllText(OfflineLogPath);
+                var existing = JsonSerializer.Deserialize<List<KillEntry>>(json);
+                if (existing != null)
+                    kills.AddRange(existing);
+            }
+
+            kills.Add(entry);
+
+            File.WriteAllText(OfflineLogPath,
+                JsonSerializer.Serialize(kills, new JsonSerializerOptions { WriteIndented = true }));
+
+            _logger.LogInformation("Kill saved to offline queue: {Kill}", entry);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to write kill to offline file.");
+        }
+    }
     #endregion
 }
 
