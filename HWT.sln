@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HWT.Application", "HWT.Application\HWT.Application.csproj", "{46EAB307-8ECF-4A0C-A2F4-8A12406AC404}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HWT.Application", "HWT.Application\HWT.Application.csproj", "{46EAB307-8ECF-4A0C-A2F4-8A12406AC404}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HWT.Domain", "HWT.Domain\HWT.Domain.csproj", "{4726E5E0-E87E-46BB-9E20-CA4CA73AB5A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HWT.Domain", "HWT.Domain\HWT.Domain.csproj", "{4726E5E0-E87E-46BB-9E20-CA4CA73AB5A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HWT.Infrastructure", "HWT.Infrastructure\HWT.Infrastructure.csproj", "{F0049C95-8408-448A-9677-E0C98D1DA99E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HWT.Infrastructure", "HWT.Infrastructure\HWT.Infrastructure.csproj", "{F0049C95-8408-448A-9677-E0C98D1DA99E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HWT.Presentation", "HWT.Presentation\HWT.Presentation.csproj", "{C1AF6894-A91F-4430-87D4-1018FB853816}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HWT.Presentation", "HWT.Presentation\HWT.Presentation.csproj", "{C1AF6894-A91F-4430-87D4-1018FB853816}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

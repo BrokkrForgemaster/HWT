@@ -28,20 +28,28 @@ public class GoogleSheetService : IGoogleSheetService
     {
         _logger = logger;
         var settings = opts.Value;
-        var credPath       = settings.GoogleApiCredentialsPath 
-                             ?? throw new ArgumentException("GoogleApiCredentialsPath not configured");
-        _spreadsheetId     = settings.GoogleSheetsId 
-                             ?? throw new ArgumentException("GoogleSheetsId not configured");
+        
+        var credPath = settings.GoogleApiCredentialsPath;
 
-        var credential = GoogleCredential
-            .FromFile(credPath)
+        if (string.IsNullOrWhiteSpace(credPath) || !File.Exists(credPath))
+        {
+            _logger.LogWarning("Google Sheets credentials not found. Logging is disabled.");
+            _sheets = null;
+            return; 
+        }
+        
+        var creds = GoogleCredential.FromFile(credPath)
             .CreateScoped(SheetsService.Scope.Spreadsheets);
 
         _sheets = new SheetsService(new BaseClientService.Initializer
         {
-            HttpClientInitializer = credential,
-            ApplicationName       = "HWT Kill Tracker"
+            HttpClientInitializer = creds,
+            ApplicationName = "Kill Tracker",
         });
+
+        _spreadsheetId     = settings.GoogleSheetsId 
+                             ?? throw new ArgumentException("GoogleSheetsId not configured");
+        
     }
     #endregion
     
