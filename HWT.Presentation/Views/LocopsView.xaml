@@ -69,8 +69,8 @@
                   GridLinesVisibility="None"
                   Foreground="White"
                   Margin="8"
-                  ScrollViewer.VerticalScrollBarVisibility="Hidden
-                  >
+                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                  />
 
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
