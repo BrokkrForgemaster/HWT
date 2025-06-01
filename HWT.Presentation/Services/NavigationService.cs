@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using HWT.Application.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 
 namespace HWT.Presentation.Services;
@@ -18,6 +19,7 @@ public class NavigationService : INavigationService
         {
             ["Dashboard"] = typeof(Views.DashboardView), 
             ["Kill Tracker"] = typeof(Views.KillTracker), 
+            ["Locops"] = typeof(Views.LocopsView), 
             ["Settings"] = typeof(Views.SettingsForm), 
             // other views…
         };
@@ -29,31 +31,13 @@ public class NavigationService : INavigationService
                      ?? throw new ArgumentNullException(nameof(hostFrame));
     }
 
-    public void Navigate(string key)
+    public void Navigate(string viewKey)
     {
-        if (_hostFrame is null)
-            throw new InvalidOperationException("NavigationService not initialized.");
+        if (!_map.TryGetValue(viewKey, out var viewType))
+            throw new InvalidOperationException($"No view mapped for key '{viewKey}'");
 
-        if (!_map.TryGetValue(key, out var viewType))
-            throw new ArgumentException($"No view mapped for '{key}'.");
-        
-        var viewObj = _provider.GetService(viewType)
-                      ?? Activator.CreateInstance(viewType)
-                      ?? throw new InvalidOperationException($"Cannot create {viewType.Name}");
-
-        switch (viewObj)
-        {
-            case Page page:
-                _hostFrame.Navigate(page);
-                break;
-
-            case UserControl uc:
-                _hostFrame.Content = uc;
-                break;
-
-            default:
-                throw new InvalidOperationException(
-                    $"Mapped type '{viewType.Name}' is neither Page nor UserControl.");
-        }
+        // Resolve the view from DI (so its constructor dependencies are injected)
+        var viewInstance = (UserControl)_provider.GetRequiredService(viewType);
+        _hostFrame.Content = viewInstance;
     }
 }

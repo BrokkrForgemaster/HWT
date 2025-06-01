@@ -2,11 +2,11 @@
 ; HouseWolfInstaller.iss
 ; ---------------------------------------------------------------------------
 #define MyAppName        "House Wolf App"
-#define MyAppVersion     "0.1.1"
+#define MyAppVersion     "0.1.3"
 #define MyAppPublisher   "House Wolf Org"
 #define MyAppExeName     "HWT.Presentation.exe"
-#define InstallerIcon    "Installer\Icons\installer.ico"
-#define DesktopIcon      "Installer\Icons\app-desktop.ico"
+#define InstallerIcon    "Icons\installer.ico"
+#define DesktopIcon      "Icons\app-desktop.ico"
 
 [Setup]
 ; Unique ID—generate a new GUID for your real installer.
@@ -21,8 +21,9 @@ DefaultGroupName={#MyAppName}
 SetupIconFile={#InstallerIcon}
 
 ; Output installer filename (relative to this script’s folder):
-OutputDir=.
-OutputBaseFilename={#MyAppName}_Installer_v{#MyAppVersion}
+; The compiled EXE will be placed in “HWT\” under the folder containing .iss
+OutputDir=HWT
+OutputBaseFilename={#MyAppName}-v{#MyAppVersion}
 
 Compression=lzma
 SolidCompression=yes
@@ -31,15 +32,11 @@ SolidCompression=yes
 ; Files to include in the installer
 ; ---------------------------------------------------------------------------
 [Files]
-; Copy everything under your published folder into {app}\ (e.g. Program Files\House Wolf App\)
-; The Published folder is assumed to be at:
-;   <repo-root>\HWT.Presentation\bin\Release\net9.0-windows\win-x64\publish\*
-; If you used /p:PublishDir, adjust the path accordingly.
-
-Source: "..\HWT.Presentation\bin\Release\net9.0-windows\win-x64\publish\*"; \
+; Copy everything under the published win-x64 folder into {app}\
+; (.iss is in C:\dev\HWT\Installer\, so we go up one to C:\dev\HWT\ then down into HWT.Presentation\bin\…)
+Source: "..\HWT.Presentation\bin\Release\net9.0-windows\win-x64\*"; \
   DestDir: "{app}"; \
-  Flags: ignoreversion recursesubdirs createallsubdirs; \
-  Components: main
+  Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; Also copy your desktop‐shortcut icon into the install dir (so Inno can reference it later):
 Source: "{#DesktopIcon}"; DestDir: "{app}"; Flags: ignoreversion
@@ -48,9 +45,9 @@ Source: "{#DesktopIcon}"; DestDir: "{app}"; Flags: ignoreversion
 ; Tasks: define optional desktop shortcut creation
 ; ---------------------------------------------------------------------------
 [Tasks]
-Name: "desktopicon";\
-  Description: "Create a &desktop icon";\
-  GroupDescription: "Additional icons";\
+Name: "desktopicon"; \
+  Description: "Create a &desktop icon"; \
+  GroupDescription: "Additional icons"; \
   Flags: unchecked
 
 ; ---------------------------------------------------------------------------
@@ -58,22 +55,21 @@ Name: "desktopicon";\
 ; ---------------------------------------------------------------------------
 [Icons]
 ; Start‐menu shortcut
-Name: "{group}\{#MyAppName}"; \
+ Name: "{group}\{#MyAppName}"; \
   Filename: "{app}\{#MyAppExeName}"; \
   WorkingDir: "{app}"; \
-  IconFilename: "{app}\{#DesktopIcon}"; \
-  Components: main
+  IconFilename: "{app}\installer.ico"
 
 ; Desktop shortcut (only if user checks the box)
-Name: "{commondesktop}\{#MyAppName}"; \
+ Name: "{commondesktop}\{#MyAppName}"; \
   Filename: "{app}\{#MyAppExeName}"; \
   Tasks: desktopicon; \
   WorkingDir: "{app}"; \
-  IconFilename: "{app}\{#DesktopIcon}"; \
-  Components: main
+  IconFilename: "{app}\app-desktop.ico"
 
 ; ---------------------------------------------------------------------------
 ; Uninstaller settings (optional)
 ; ---------------------------------------------------------------------------
 [UninstallDelete]
 Type: files; Name: "{app}\{#DesktopIcon}"
+Type: filesandordirs; Name: "{app}\assets"

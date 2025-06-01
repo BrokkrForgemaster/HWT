@@ -20,6 +20,7 @@ public class SettingsService : ISettingsService, IDisposable
     private readonly string _defaultConfigPath;
     private readonly FileSystemWatcher _watcher;
 
+
     #endregion
 
     #region Constructor
@@ -33,7 +34,6 @@ public class SettingsService : ISettingsService, IDisposable
     public SettingsService(ILogger<SettingsService> logger)
     {
         _logger = logger;
-
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var userFolder = Path.Combine(appData, "HouseWolf");
         Directory.CreateDirectory(userFolder);

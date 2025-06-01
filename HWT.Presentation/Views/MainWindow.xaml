@@ -86,11 +86,6 @@
 
 
   <Grid>
-    <!-- Background Image -->
-    <Image Source="/Assets/dashboard-bg.jpg"
-           Stretch="UniformToFill"
-           Opacity="0.08"
-           IsHitTestVisible="False" />
 
     <!-- Sidebar -->
     <Border Style="{DynamicResource SidebarBorderStyle}"
@@ -142,6 +137,10 @@
                   Tag="Kill Tracker"
                   Click="Navigate_Click"
                   Style="{StaticResource SidebarButtonStyle}"/>
+          <Button Content="LOCOPS"
+                  Tag="LOCOPS"
+                  Click="Navigate_Click"
+                  Style="{StaticResource SidebarButtonStyle}"/>
           <Button Content="Settings"
                   Tag="Settings"
                   Click="Navigate_Click"
@@ -155,8 +154,15 @@
 
     <!-- Main Content -->
     <Grid Margin="340,20,20,20">
-      <!-- Glow layer -->
+      <Image Source="/Assets/Pack_Tracker.png"
+             Opacity="0.3"
+             Stretch="UniformToFill"
+             SnapsToDevicePixels="True"
+             IsHitTestVisible="False"
+             Panel.ZIndex="1" />
+
       <Border CornerRadius="24"
+      
               Background="{DynamicResource CardBackground}"
               Effect="{DynamicResource CardShadow}"/>
       <!-- Content frame -->

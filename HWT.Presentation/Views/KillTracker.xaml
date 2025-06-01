@@ -12,10 +12,10 @@
 
     <Grid>
         <!-- Blurred background -->
-        <Image Source="/Assets/HWpic1.png"
-               Stretch="UniformToFill"
-               Opacity="0.1"
-               IsHitTestVisible="False" />
+        <!-- <Image Source="/Assets/HWpic1.png" -->
+        <!--        Stretch="UniformToFill" -->
+        <!--        Opacity="0.1" -->
+        <!--        IsHitTestVisible="False" /> -->
 
         <!-- Dashboard Card -->
         <Border Background="Transparent"

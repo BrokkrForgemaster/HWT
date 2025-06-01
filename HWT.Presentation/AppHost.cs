@@ -1,5 +1,6 @@
 using HWT.Application;
 using HWT.Application.Interfaces;
+using HWT.Application.Services;
 using HWT.Domain.Entities;
 using HWT.Infrastructure;
 using HWT.Infrastructure.Services;
@@ -36,12 +37,14 @@ namespace HWT.Presentation
                         .AddApplication()
                         .AddHttpClient()
                         .AddSingleton<INavigationService, NavigationService>()
+                        .AddSingleton<IUpdateService, UpdateService>()
                         .AddSingleton<ISettingsService, SettingsService>()
                         .AddSingleton<IThemeManager>(sp =>
                             new ThemeManager(System.Windows.Application.Current))
                         .AddSingleton<MainWindow>()
                         .AddSingleton<DashboardView>()
                         .AddSingleton<KillTracker>()
+                        .AddSingleton<LocopsView>()
                         .AddSingleton<SettingsForm>();
                 })
 

@@ -28,6 +28,27 @@ public partial class MainWindow : Window
             TxtLocalTime.Text = now.ToString("MM/dd/yyyy") + "\n" + now.ToString("h:mm:ss tt");
         };
         _clockTimer.Start();
+        
+        Loaded += async (_, __) =>
+        {
+            // As soon as the window finishes loading, trigger a check:
+            bool updated = await _updater.TryUpdateAsync( (pct, status) =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    UpdateProgressBar.Value = pct;
+                    UpdateStatusText.Text = status;
+                });
+            });
+            if (updated)
+            {
+                MessageBox.Show(
+                    "An update was found and installed. Please restart the app.",
+                    "Update Applied",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+        };
     }
 
     private void Navigate_Click(object sender, RoutedEventArgs e)
