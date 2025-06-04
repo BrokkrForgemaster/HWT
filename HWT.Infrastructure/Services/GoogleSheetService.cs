@@ -99,6 +99,11 @@ public class GoogleSheetService : IGoogleSheetService
     /// </summary>
     public async Task LogKillAsync(KillEntry kill)
     {
+        if (_sheets == null)
+        {
+            _logger.LogWarning("Google Sheets service is not available. Will queue kill locally: {Summary}", kill.Summary);
+            throw new InvalidOperationException("Google Sheets service not initialized.");
+        }
         // Skip logging if this is an "unknown" kill
         if (string.Equals(kill.Type, "Unknown", StringComparison.OrdinalIgnoreCase)
             || string.Equals(kill.Attacker, "Unknown", StringComparison.OrdinalIgnoreCase)
