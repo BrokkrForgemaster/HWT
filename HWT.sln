@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HWT.Infrastructure", "HWT.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HWT.Presentation", "HWT.Presentation\HWT.Presentation.csproj", "{C1AF6894-A91F-4430-87D4-1018FB853816}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HWT.Api", "HWT.Api\HWT.Api.csproj", "{628CC1E3-C397-4BB6-97CE-0FFF966739EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{C1AF6894-A91F-4430-87D4-1018FB853816}.Release|x64.Build.0 = Release|Any CPU
 		{C1AF6894-A91F-4430-87D4-1018FB853816}.Release|x86.ActiveCfg = Release|Any CPU
 		{C1AF6894-A91F-4430-87D4-1018FB853816}.Release|x86.Build.0 = Release|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Debug|x64.Build.0 = Debug|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Debug|x86.Build.0 = Debug|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Release|x64.ActiveCfg = Release|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Release|x64.Build.0 = Release|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Release|x86.ActiveCfg = Release|Any CPU
+		{628CC1E3-C397-4BB6-97CE-0FFF966739EC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

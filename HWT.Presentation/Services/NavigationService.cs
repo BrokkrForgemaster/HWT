@@ -19,7 +19,7 @@ public class NavigationService : INavigationService
         {
             ["Dashboard"] = typeof(Views.DashboardView), 
             ["Kill Tracker"] = typeof(Views.KillTracker), 
-            ["Locops"] = typeof(Views.LocopsView), 
+            ["Industry Tracker"] = typeof(Views.LocopsView), 
             ["Settings"] = typeof(Views.SettingsForm), 
             // other views…
         };

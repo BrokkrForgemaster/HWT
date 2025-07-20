@@ -22,5 +22,6 @@ public class AppSettings
     public bool   ShowApiSettings            { get; set; } = false;
     public string? TradingApiUrl             { get; set; }  
     public string? TradingApiKey             { get; set; }
+    public string? TradingApiSecretKey       { get; set; }
     public string? ThemeKey { get; set; }
 }

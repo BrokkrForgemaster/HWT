@@ -37,6 +37,10 @@ namespace HWT.Presentation
                         .AddApplication()
                         .AddHttpClient()
                         .AddSingleton<INavigationService, NavigationService>()
+                        .AddSingleton<IGameLogService, GameLogService>()
+                        .AddSingleton<IGoogleSheetService, GoogleSheetService>()
+                        .AddSingleton<IKillEventService, KillEventService>()
+                        .AddSingleton<IRefineryJobsService, RefineryJobsService>()
                         .AddSingleton<IUpdateService, UpdateService>()
                         .AddSingleton<ISettingsService, SettingsService>()
                         .AddSingleton<IThemeManager>(sp =>

@@ -26,8 +26,8 @@ public static class DependencyInjection
         });
         services
             .AddSingleton<IGameLogService, GameLogService>()
-            .AddSingleton<IGoogleSheetService, GoogleSheetService>()
             .AddSingleton<IKillEventService, KillEventService>()
+            .AddSingleton<IRefineryJobsService, RefineryJobsService>()
             .AddSingleton<ISettingsService, SettingsService>()
             .AddSingleton<IUexCorpService, UexCorpService>()
             .AddSingleton<IWebScraperService, WebScraperService>();

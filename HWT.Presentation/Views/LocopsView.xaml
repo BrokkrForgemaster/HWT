@@ -6,7 +6,6 @@
              Height="Auto"
              Width="Auto"
              Background="#1E1E1E">
-  
 
     <UserControl.Resources>
         <local:AlternationToBrushConverter x:Key="AltRowBrush"
@@ -21,9 +20,10 @@
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderThickness" Value="1,1,1,1"/>
         </Style>
         <Style x:Key="CenterCellStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="FontFamily" Value="Segoe UI"/>
@@ -34,130 +34,228 @@
         </Style>
     </UserControl.Resources>
 
-
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <TabControl x:Name="MainTabControl">
+            <TabItem Header="Commodity Search"
+                     Padding="10"
+                     FontSize="18"
+                     FontWeight="Bold"
+                     ToolTip="Search for commodities across the galaxy">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
+                    <ComboBox x:Name="CommodityCombo"
+                              Grid.Row="0"
+                              Margin="8"
+                              FontSize="18"
+                              Width="300"
+                              IsEditable="True"
+                              Text="Type or select commodity name..."
+                              Background="#2D2D2D"
+                              Foreground="Black"
+                              SelectionChanged="CommodityCombo_SelectionChanged"
+                              KeyUp="CommodityCombo_KeyUp"
+                              GotKeyboardFocus="CommodityCombo_GotKeyboardFocus"
+                              LostKeyboardFocus="CommodityCombo_LostKeyboardFocus"/>
 
-        <ComboBox x:Name="CommodityCombo"
-                  Grid.Row="0"
-                  Margin="8"
-                  FontSize="18"
-                  Width="300"
-                  IsEditable="True"
-                  Text="Type or select commodity name..."
-                  Background="#2D2D2D"
-                  Foreground="Black"
-                  SelectionChanged="CommodityCombo_SelectionChanged"
-                  KeyUp="CommodityCombo_KeyUp"
-                  GotKeyboardFocus="CommodityCombo_GotKeyboardFocus"
-                  LostKeyboardFocus="CommodityCombo_LostKeyboardFocus"/>
-        
-        <DataGrid x:Name="CommoditiesGrid"
-                  Grid.Row="1"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserSortColumns="True"
-                  CanUserResizeColumns="True"
-                  AlternationCount="2"
-                  FontSize="18"
-                  ColumnHeaderStyle="{StaticResource DarkColumnHeader}"
-                  Background="#1E1E1E"
-                  GridLinesVisibility="None"
-                  Foreground="White"
-                  Margin="8"
-                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                  >
+                    <!-- COMMODITIES GRID: fixed -->
+                    <DataGrid x:Name="CommoditiesGrid"
+                              Grid.Row="1"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserSortColumns="True"
+                              CanUserResizeColumns="True"
+                              AlternationCount="2"
+                              FontSize="18"
+                              ColumnHeaderStyle="{StaticResource DarkColumnHeader}"
+                              Background="#1E1E1E"
+                              GridLinesVisibility="All"
+                              Foreground="White"
+                              Margin="8"
+                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                    >
 
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="Margin" Value="0,0,0,4"/>
-                    <Setter Property="Background"
-                            Value="{Binding AlternationIndex,
-                                            RelativeSource={RelativeSource Self},
-                                            Converter={StaticResource AltRowBrush}}"/>
-                </Style>
-            </DataGrid.RowStyle>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background"
+                                        Value="{Binding AlternationIndex,
+                                                        RelativeSource={RelativeSource Self},
+                                                        Converter={StaticResource AltRowBrush}}"/>
+                            </Style>
+                        </DataGrid.RowStyle>
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Commodity"
-                                    Binding="{Binding CommodityName}"
-                                    Width="Auto"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Commodity"
+                                                Binding="{Binding CommodityName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Buy Price"
-                                    Binding="{Binding PriceBuy}"
-                                    Width="100"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Buy Price"
+                                                Binding="{Binding PriceBuy}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Sell Price"
-                                    Binding="{Binding PriceSell}"
-                                    Width="100"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Sell Price"
+                                                Binding="{Binding PriceSell}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="SCU Buy"
-                                    Binding="{Binding ScuBuy}"
-                                    Width="100"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="SCU Buy"
+                                                Binding="{Binding ScuBuy}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="SCU Sell"
-                                    Binding="{Binding ScuSell}"
-                                    Width="100"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="SCU Sell"
+                                                Binding="{Binding ScuSell}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Star System"
-                                    Binding="{Binding StarSystemName}"
-                                    Width="125"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Star System"
+                                                Binding="{Binding StarSystemName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Planet"
-                                    Binding="{Binding PlanetName}"
-                                    Width="125"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Planet"
+                                                Binding="{Binding PlanetName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Orbit"
-                                    Binding="{Binding OrbitName}"
-                                    Width="250"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Orbit"
+                                                Binding="{Binding OrbitName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Moon"
-                                    Binding="{Binding MoonName}"
-                                    Width="200"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Moon"
+                                                Binding="{Binding MoonName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Space Station"
-                                    Binding="{Binding SpaceStationName}"
-                                    Width="Auto"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Space Station"
+                                                Binding="{Binding SpaceStationName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="City"
-                                    Binding="{Binding CityName}"
-                                    Width="200"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="City"
+                                                Binding="{Binding CityName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Outpost"
-                                    Binding="{Binding OutpostName}"
-                                    Width="250"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Outpost"
+                                                Binding="{Binding OutpostName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="POI"
-                                    Binding="{Binding PoiName}"
-                                    Width="125"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="POI"
+                                                Binding="{Binding PoiName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Faction"
-                                    Binding="{Binding FactionName}"
-                                    Width="200"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
+                            <DataGridTextColumn Header="Faction"
+                                                Binding="{Binding FactionName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
 
-                <DataGridTextColumn Header="Terminal"
-                                    Binding="{Binding TerminalName}"
-                                    Width="Auto"
-                                    ElementStyle="{StaticResource CenterCellStyle}" />
-            </DataGrid.Columns>
-        </DataGrid>
+                            <DataGridTextColumn Header="Terminal"
+                                                Binding="{Binding TerminalName}"
+                                                Width="*"
+                                                ElementStyle="{StaticResource CenterCellStyle}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Refinery Jobs"
+                     Padding="10"
+                     FontSize="18"
+                     FontWeight="Bold"
+                     ToolTip="View and manage refinery jobs">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header + Refresh button -->
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="Refinery Jobs"
+                                   Padding="10"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   ToolTip="View and manage refinery jobs"/>
+                        <Button 
+                            x:Name="RefreshRefineryJobsButton"
+                            Content="Refresh"
+                            Margin="16,0,0,0"
+                            Padding="8,4"
+                            Click="RefreshRefineryJobsButton_Click"/>
+                    </StackPanel>
+
+                    <!-- REFINERY JOBS GRID: fixed (no stray backslash) -->
+                    <DataGrid x:Name="RefineryJobsDataGrid"
+                              Grid.Row="1"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserResizeRows="True"
+                              RowHeight="22"
+                              GridLinesVisibility="All"
+                              BorderBrush="#333"
+                              HeadersVisibility="Column"
+                              FontSize="18"
+                              ColumnHeaderStyle="{StaticResource DarkColumnHeader}"
+                              Background="#1E1E1E"
+                              Foreground="White"
+                              Margin="0,0,0,8">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" 
+                                                Binding="{Binding Id}" 
+                                                Width="60" 
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+
+                            <DataGridTextColumn Header="Terminal"  
+                                                Binding="{Binding TerminalName}" 
+                                                Width="150" 
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+
+                            <DataGridTextColumn Header="Method ID" 
+                                                Binding="{Binding IdRefineryMethod}" 
+                                                Width="100" 
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+
+                            <DataGridTextColumn Header="Cost"      
+                                                Binding="{Binding Cost}"             
+                                                Width="80"  
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+
+                            <DataGridTextColumn Header="Duration (min)" 
+                                                Binding="{Binding TimeMinutes}"      
+                                                Width="100" 
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+
+                            <DataGridTextColumn Header="Items Count" 
+                                                Binding="{Binding Items.Count}"      
+                                                Width="80"  
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+
+                            <DataGridTextColumn Header="Expires At" 
+                                                Binding="{Binding ExpirationDateTime, StringFormat=MM/dd/yyyy HH:mm}" 
+                                                Width="150" 
+                                                ElementStyle="{StaticResource CenterCellStyle}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Status text at bottom -->
+                    <TextBlock x:Name="RefineryJobsStatusText"
+                               Grid.Row="2"
+                               Foreground="Gray"
+                               FontStyle="Italic"
+                               Text="Click Refresh to load refinery jobs."/>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>

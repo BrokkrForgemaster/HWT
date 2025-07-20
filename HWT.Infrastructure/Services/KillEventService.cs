@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HWT.Application.Interfaces;
+using HWT.Domain.DTOs;
 using HWT.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -122,6 +123,67 @@ public class KillEventService : IKillEventService, IDisposable
         }
     }
     #endregion
+    
+    public async Task<IEnumerable<KillEntry>> GetRecentKillsAsync(string userId, int count)
+    {
+        try
+        {
+            _logger.LogInformation("Getting recent kills for user {UserId}, count: {Count}", userId, count);
+        
+            // You'll need to implement the actual data retrieval logic here
+            // This could be from a database, repository, or other data source
+            // For now, this is a placeholder - replace with your actual implementation
+        
+            // Example if you have a repository or DbContext:
+            // return await _repository.GetRecentKillsAsync(userId, count);
+        
+            // Placeholder return - replace with actual implementation
+            return new List<KillEntry>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting recent kills for user {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task<KillStatsDto> GetKillStatsAsync(string userId)
+    {
+        try
+        {
+            _logger.LogInformation("Getting kill stats for user {UserId}", userId);
+        
+            // Implement your stats calculation logic here
+            // This might involve querying your database for various kill statistics
+        
+            // Placeholder return - replace with actual implementation
+            return new KillStatsDto();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting kill stats for user {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task SyncKillsFromGameLogAsync(string userId)
+    {
+        try
+        {
+            _logger.LogInformation("Syncing kills from game log for user {UserId}", userId);
+        
+            // Implement your sync logic here
+            // This might involve reading from game logs and updating your database
+        
+            // Placeholder implementation
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error syncing kills for user {UserId}", userId);
+            throw;
+        }
+    }
 }
 
 /// <summary name="DisposableAction">
@@ -133,3 +195,4 @@ public class DisposableAction(Action onDispose) : IDisposable
 {
     public void Dispose() => onDispose();
 }
+

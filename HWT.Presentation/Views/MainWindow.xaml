@@ -10,7 +10,7 @@
   <Window.Resources>
     
     <!-- Core brushes -->
-    <SolidColorBrush x:Key="ForegroundBrush"  Color="White"/>
+    <SolidColorBrush x:Key="ForegroundBrush"  Color="Black"/>
     <SolidColorBrush x:Key="AccentBrush"      Color="#66FFFFFF"/> <!-- DodgerBlue for progress bar -->
     <SolidColorBrush x:Key="GlassBorderBrush" Color="#40FFFFFF"/> <!-- semi-transparent white -->
 
@@ -137,8 +137,8 @@
                   Tag="Kill Tracker"
                   Click="Navigate_Click"
                   Style="{StaticResource SidebarButtonStyle}"/>
-          <Button Content="LOCOPS"
-                  Tag="LOCOPS"
+          <Button Content="Industry Tracker"
+                  Tag="Industry Tracker"
                   Click="Navigate_Click"
                   Style="{StaticResource SidebarButtonStyle}"/>
           <Button Content="Settings"

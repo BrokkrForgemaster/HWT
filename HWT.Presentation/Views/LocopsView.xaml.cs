@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;      // List<>, IReadOnlyList<>
-using System.Linq;                     // .Select(...), .Distinct(...), .OrderBy(...)
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text.Json; // .Select(...), .Distinct(...), .OrderBy(...)
 using System.Threading;                // CancellationTokenSource
 using System.Threading.Tasks;          // Task, async/await
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;            // KeyEventArgs, Key
 using HWT.Application.Interfaces;       // IUexCorpService
-using HWT.Domain.Entities;             // CommodityFuture, CommodityPrice
+using HWT.Domain.Entities;
+using Microsoft.Extensions.Configuration; // CommodityFuture, CommodityPrice
 using Microsoft.Extensions.Logging;     // ILogger<T>
 
 namespace HWT.Presentation.Views
@@ -24,17 +28,20 @@ namespace HWT.Presentation.Views
         private readonly IUexCorpService       _uexService;
         private readonly ILogger<LocopsView>   _logger;
         private List<string>                   _commodityNames = new();
+        private readonly HttpClient _httpClient;
+        private readonly IConfiguration _configuration;
 
         public LocopsView(IUexCorpService uexService,
-                          ILogger<LocopsView> logger)
+                          ILogger<LocopsView> logger, HttpClient httpClient, IConfiguration configuration)
         {
             if (uexService == null) throw new ArgumentNullException(nameof(uexService));
             if (logger == null)     throw new ArgumentNullException(nameof(logger));
 
             InitializeComponent();
-
+            _configuration = configuration;
             _uexService = uexService;
             _logger      = logger;
+            _httpClient = httpClient;
 
             Loaded += LocopsView_Loaded;
         }
@@ -46,7 +53,113 @@ namespace HWT.Presentation.Views
 
             await PopulateComboBoxAsync();
         }
+        
+        private bool RefineryJobsTabIsSelected()
+        {
+            // Find the Refinery Jobs TabItem by Header (or by Index if you know it)
+            var selected =MainTabControl.SelectedItem as TabItem;
+            return selected != null && (selected.Header as string) == "Refinery Jobs";
+        }
 
+        private async void RefreshRefineryJobsButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadRefineryJobsAsync();
+        }
+
+        private async Task LoadRefineryJobsAsync()
+        {
+            try
+            {
+                // Disable the Refresh button while loading
+                RefreshRefineryJobsButton.IsEnabled = false;
+                RefineryJobsStatusText.Text = "Loading refinery jobs…";
+
+                // Replace this with how you actually store/retrieve your secret key:
+                string secretKey = GetUexSecretKey();
+                if (string.IsNullOrWhiteSpace(secretKey))
+                {
+                    RefineryJobsStatusText.Text = "Error: missing UEX secret key.";
+                    return;
+                }
+
+                // Prepare the request
+                var request = new HttpRequestMessage(
+                    HttpMethod.Get,
+                    "https://api.uexcorp.space/2.0/user_refineries_jobs/");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", secretKey);
+
+                // Send
+                var sendAsync = _httpClient.SendAsync(request);
+                HttpResponseMessage response = await sendAsync;
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
+                    response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    RefineryJobsStatusText.Text = "Invalid or forbidden secret key.";
+                    RefineryJobsDataGrid.ItemsSource = null;
+                    return;
+                }
+                else if (!response.IsSuccessStatusCode)
+                {
+                    RefineryJobsStatusText.Text = $"API error: {response.StatusCode}";
+                    RefineryJobsDataGrid.ItemsSource = null;
+                    return;
+                }
+
+                // Read JSON
+                string json = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                // Some endpoints may return an object with a “status” field instead of an array:
+                List<RefineryJob> jobs;
+                if (json.TrimStart().StartsWith("["))
+                {
+                    jobs = JsonSerializer.Deserialize<List<RefineryJob>>(json, options) 
+                           ?? new List<RefineryJob>();
+                }
+                else
+                {
+                    // parse envelope to check for “no_refinery_jobs_found”
+                    using var doc = JsonDocument.Parse(json);
+                    if (doc.RootElement.TryGetProperty("status", out var statusProp)
+                        && statusProp.GetString() == "no_refinery_jobs_found")
+                    {
+                        jobs = new List<RefineryJob>();
+                    }
+                    else
+                    {
+                        // Fallback: try to deserialize as array anyway
+                        jobs = JsonSerializer.Deserialize<List<RefineryJob>>(json, options) 
+                               ?? new List<RefineryJob>();
+                    }
+                }
+
+                if (jobs.Count == 0)
+                {
+                    RefineryJobsStatusText.Text = "No refinery jobs found.";
+                    RefineryJobsDataGrid.ItemsSource = null;
+                }
+                else
+                {
+                    RefineryJobsStatusText.Text = $"{jobs.Count} job(s) loaded.";
+                    RefineryJobsDataGrid.ItemsSource = jobs;
+                }
+            }
+            catch (Exception ex)
+            {
+                RefineryJobsStatusText.Text = $"Error fetching jobs: {ex.Message}";
+                RefineryJobsDataGrid.ItemsSource = null;
+            }
+            finally
+            {
+                RefreshRefineryJobsButton.IsEnabled = true;
+            }
+        }
+
+        private string GetUexSecretKey()
+        {
+           return _configuration["AppSettings:UexSecretKey"] 
+                  ?? throw new InvalidOperationException("UEX secret key is not configured.");
+        }
         /// <summary>
         /// Fetch the list of all futures (just to fill the ComboBox with commodity names).
         /// </summary>
@@ -69,8 +182,7 @@ namespace HWT.Presentation.Views
             {
                 _logger.LogError(ex, "Failed to fetch commodity futures for ComboBox.");
             }
-
-            // Build a distinct, sorted list of names
+            
             _commodityNames = futures
                 .Select(f => f.Name?.Trim() ?? string.Empty)
                 .Where(n => !string.IsNullOrEmpty(n))
