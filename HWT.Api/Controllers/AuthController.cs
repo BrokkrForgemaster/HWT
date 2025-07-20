@@ -18,7 +18,7 @@ public class AuthController : ControllerBase
     private readonly IJwtService _jwtService;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<AuthController> _logger;
-    private readonly IDiscordBotService _discordBotService;
+    private readonly IDiscordBotService? _discordBotService = null;
 
     public AuthController(
         IDiscordService discordService,
@@ -180,12 +180,15 @@ public async Task<IActionResult> DiscordCallback([FromQuery] string code, [FromQ
         // **NEW: Fetch Discord server roles**
         try
         {
-            var discordRoles = await _discordBotService.GetUserRolesAsync(discordUser.Id);
-            user.SetDiscordRoles(discordRoles);
-            await _userManager.UpdateAsync(user);
+            if (_discordBotService != null)
+            {
+                var discordRoles = await _discordBotService.GetUserRolesAsync(discordUser.Id);
+                user.SetDiscordRoles(discordRoles);
+                await _userManager.UpdateAsync(user);
             
-            _logger.LogInformation("Updated Discord roles for user {UserId}: {Roles}", 
-                user.Id, string.Join(", ", discordRoles));
+                _logger.LogInformation("Updated Discord roles for user {UserId}: {Roles}", 
+                    user.Id, string.Join(", ", discordRoles));
+            }
         }
         catch (Exception ex)
         {

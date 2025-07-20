@@ -150,7 +150,7 @@ namespace HWT.Application.Services
                     }
                 }
                 
-                var installDir = Path.GetDirectoryName(exePath)!;
+                var installDir = Path.GetDirectoryName(exePath);
                 ZipFile.ExtractToDirectory(tempZip, installDir, overwriteFiles: true);
                 File.Delete(tempZip);
                 

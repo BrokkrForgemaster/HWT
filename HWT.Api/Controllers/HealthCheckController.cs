@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-namespace PackTracker.Api.Controllers
+namespace HWT.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

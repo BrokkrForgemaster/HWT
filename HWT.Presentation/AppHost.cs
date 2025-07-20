@@ -1,15 +1,11 @@
 using HWT.Application;
 using HWT.Application.Interfaces;
-using HWT.Application.Services;
-using HWT.Domain.Entities;
 using HWT.Infrastructure;
-using HWT.Infrastructure.Services;
 using HWT.Presentation.Services;
 using HWT.Presentation.Views;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Http;
 using Serilog;
 
 namespace HWT.Presentation
@@ -18,13 +14,11 @@ namespace HWT.Presentation
     {
         public static IHost Build() =>
             Host.CreateDefaultBuilder()
-                // 1) Add Serilog, reading its settings from appsettings.json
                 .UseSerilog((ctx, cfg) =>
                     cfg.ReadFrom.Configuration(ctx.Configuration))
                 
                 .ConfigureAppConfiguration((ctx, builder) =>
                 {
-                    // ensure appsettings.json is loaded
                     builder.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                 })
 
@@ -32,17 +26,15 @@ namespace HWT.Presentation
                 {
                     var configuration = ctx.Configuration;
 
+                    // Add layered services
                     services
-                        .AddInfrastructure(configuration)
                         .AddApplication()
+                        .AddInfrastructure(configuration);
+
+                    // Presentation-specific services
+                    services
                         .AddHttpClient()
                         .AddSingleton<INavigationService, NavigationService>()
-                        .AddSingleton<IGameLogService, GameLogService>()
-                        .AddSingleton<IGoogleSheetService, GoogleSheetService>()
-                        .AddSingleton<IKillEventService, KillEventService>()
-                        .AddSingleton<IRefineryJobsService, RefineryJobsService>()
-                        .AddSingleton<IUpdateService, UpdateService>()
-                        .AddSingleton<ISettingsService, SettingsService>()
                         .AddSingleton<IThemeManager>(sp =>
                             new ThemeManager(System.Windows.Application.Current))
                         .AddSingleton<MainWindow>()

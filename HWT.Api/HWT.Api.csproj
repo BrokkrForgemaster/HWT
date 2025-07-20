@@ -31,7 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HWT.Domain\HWT.Domain.csproj" />
     <ProjectReference Include="..\HWT.Infrastructure\HWT.Infrastructure.csproj" />
-    <ProjectReference Include="..\PackTracker.Core\PackTracker.Core.csproj" />
+    <ProjectReference Include="..\HWT.Application\HWT.Application.csproj" />
     <ProjectReference Include="..\PackTracker.Infrastructure\PackTracker.Infrastructure.csproj" />
   </ItemGroup>
 

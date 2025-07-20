@@ -5,7 +5,7 @@ namespace HWT.Domain.DTOs;
 /// </summary>
 public class KillStatsDto
 {
-    public int TotalKills { get; set; }
+    public int TotalKills { get; set; } 
     public int TotalPvpKills { get; set; }
     public int TotalAirKills { get; set; }
     public int TotalFpsKills { get; set; }

@@ -38,6 +38,6 @@ public class NavigationService : INavigationService
 
         // Resolve the view from DI (so its constructor dependencies are injected)
         var viewInstance = (UserControl)_provider.GetRequiredService(viewType);
-        _hostFrame.Content = viewInstance;
+        if (_hostFrame != null) _hostFrame.Content = viewInstance;
     }
 }

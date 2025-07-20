@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HWT.Application;
 
-/// <summary name="DependencyInjection">
+/// <summary>
 /// This class provides methods to register application services
 /// with the dependency injection container.
 /// </summary>
@@ -12,7 +12,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddSingleton<IUpdateService, UpdateService>();
+        // Application layer services
+        services.AddScoped<IUpdateService, UpdateService>();
+        
+        // Add other application services here as needed
+        // services.AddScoped<IUserService, UserService>();
+        // services.AddScoped<IFleetService, FleetService>();
+        
         return services;
     }
 }

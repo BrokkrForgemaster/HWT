@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using System.Text.Json;
 using HWT.Application.Interfaces;
 using HWT.Domain.DTOs;
@@ -10,7 +11,7 @@ public class KillEventService : IKillEventService, IDisposable
 {
     #region Fields
     private readonly IGameLogService     _logService;
-    private readonly IGoogleSheetService _sheet;
+    private readonly HttpClient _httpClient;
     private readonly ILogger<KillEventService> _logger;
     private readonly IDisposable         _subscription;
     public event Action<KillEntry>? KillReceived;
@@ -22,11 +23,11 @@ public class KillEventService : IKillEventService, IDisposable
     #region Constructor
     public KillEventService(
         IGameLogService     logService,
-        IGoogleSheetService sheet,
+        HttpClient httpClient,
         ILogger<KillEventService> logger)
     {
         _logService = logService;
-        _sheet      = sheet;
+        _httpClient = httpClient;
         _logger     = logger;
 
         // Subscribe to parsed kills
@@ -68,17 +69,37 @@ public class KillEventService : IKillEventService, IDisposable
             try
             {
                 _logger.LogInformation("Attempting to log kill to Google Sheets...");
-                await _sheet.LogKillAsync(entry);
-                _logger.LogInformation("Kill successfully logged.");
+                
+                var killDto = new KillDto
+                {
+                    KillerName = entry.Attacker,
+                    VictimName = entry.Target,
+                    Weapon = entry.Weapon,
+                    Timestamp = DateTime.Parse(entry.Timestamp),
+                    KillType = entry.KillType,  
+                    Location = entry.Summary
+                };
+                
+                var response = await _httpClient.PostAsJsonAsync("/api/kills", killDto);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation("Kill successfully logged to API.");
+                }
+                else
+                {
+                    _logger.LogWarning("API returned error: {StatusCode}", response.StatusCode);
+                    SaveKillOffline(entry);
+                }
             }
-            catch (FileNotFoundException ex)
+            catch (HttpRequestException ex)
             {
-                _logger.LogWarning("Google credentials missing. Logging to offline queue. Exception: {Message}", ex.Message);
-                SaveKillOffline(entry); // fallback method below
+                _logger.LogWarning("API unavailable. Logging to offline queue. Exception: {Message}", ex.Message);
+                SaveKillOffline(entry);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to log kill to Google Sheets. Logging to offline queue.");
+                _logger.LogError(ex, "Failed to log kill to API. Logging to offline queue.");
                 SaveKillOffline(entry);
             }
 
@@ -89,6 +110,8 @@ public class KillEventService : IKillEventService, IDisposable
             _logger.LogError(ex, "Unexpected error in Raise method.");
         }
     }
+
+    
     
     /// <summary name="Dispose">
     /// Disposes the KillEventService, unsubscribing from the kill events

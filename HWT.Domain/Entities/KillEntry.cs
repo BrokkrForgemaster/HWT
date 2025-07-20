@@ -2,6 +2,7 @@ namespace HWT.Domain.Entities;
 
 public class KillEntry
 {
+    public int Id { get; set; }
     public string Timestamp { get; set; } = string.Empty;
     public string Attacker { get; set; } = string.Empty;
     public string Target { get; set; } = string.Empty;

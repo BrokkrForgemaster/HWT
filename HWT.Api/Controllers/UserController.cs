@@ -25,32 +25,36 @@ public class UserController : ControllerBase
     public async Task<ActionResult<UserProfileDto>> GetProfile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
-            return NotFound();
-
-        var profile = new UserProfileDto
+        if (userId != null)
         {
-            Id = user.Id,
-            Username = user.UserName,
-            DisplayName = user.DisplayName,
-            Email = user.Email,
-            AvatarUrl = user.AvatarUrl,
-            DiscordId = user.DiscordId,
-            DiscordName = user.DiscordName,
-            DiscordRoles = user.GetDiscordRolesList(),
-            CreatedAt = user.CreatedAt,
-            LastLoginAt = user.LastLoginAt,
-            IsActive = user.IsActive,
-            Theme = user.Theme,
-            Language = user.Language,
-            Bio = user.Bio,
-            StarCitizenCharacterName = user.StarCitizenCharacterName,
-            StarCitizenOrgRank = user.StarCitizenOrgRank
-        };
+            var user = await _userManager.FindByIdAsync(userId);
 
-        return Ok(profile);
+            if (user == null)
+                return NotFound();
+
+            var profile = new UserProfileDto
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                DisplayName = user.DisplayName,
+                Email = user.Email,
+                AvatarUrl = user.AvatarUrl,
+                DiscordId = user.DiscordId,
+                DiscordName = user.DiscordName,
+                DiscordRoles = user.GetDiscordRolesList(),
+                CreatedAt = user.CreatedAt,
+                LastLoginAt = user.LastLoginAt,
+                IsActive = user.IsActive,
+                Theme = user.Theme,
+                Language = user.Language,
+                Bio = user.Bio,
+                StarCitizenCharacterName = user.StarCitizenCharacterName,
+                StarCitizenOrgRank = user.StarCitizenOrgRank
+            };
+
+            return Ok(profile);
+        }
+        return Unauthorized();
     }
 
     // PUT: api/user/profile
@@ -58,20 +62,23 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileDto dto)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
+        if (userId != null)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
 
-        if (user == null)
-            return NotFound();
+            if (user == null)
+                return NotFound();
 
-        // Only update fields that are present in the DTO
-        if (dto.DisplayName != null) user.DisplayName = dto.DisplayName;
-        if (dto.Theme != null) user.Theme = dto.Theme;
-        if (dto.Language != null) user.Language = dto.Language;
-        if (dto.Bio != null) user.Bio = dto.Bio;
-        if (dto.StarCitizenCharacterName != null) user.StarCitizenCharacterName = dto.StarCitizenCharacterName;
-        if (dto.StarCitizenOrgRank != null) user.StarCitizenOrgRank = dto.StarCitizenOrgRank;
+            // Only update fields that are present in the DTO
+            if (dto.DisplayName != null) user.DisplayName = dto.DisplayName;
+            if (dto.Theme != null) user.Theme = dto.Theme;
+            if (dto.Language != null) user.Language = dto.Language;
+            if (dto.Bio != null) user.Bio = dto.Bio;
+            if (dto.StarCitizenCharacterName != null) user.StarCitizenCharacterName = dto.StarCitizenCharacterName;
+            if (dto.StarCitizenOrgRank != null) user.StarCitizenOrgRank = dto.StarCitizenOrgRank;
 
-        await _userManager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
+        }
 
         return NoContent();
     }

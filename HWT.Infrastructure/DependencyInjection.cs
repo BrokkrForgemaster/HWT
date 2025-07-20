@@ -16,22 +16,23 @@ public static class DependencyInjection
     {
         services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
         var settings = configuration.GetSection("AppSettings").Get<AppSettings>();
-        var apiKey = settings.TradingApiKey;
+        var apiKey = settings?.TradingApiKey;
+    
         services.AddHttpClient("UEXCorp", client =>
         {
-            // NOTE the trailing slash here:
             client.BaseAddress = new Uri("https://api.uexcorp.space/");
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
+            if (!string.IsNullOrEmpty(apiKey))
+                client.DefaultRequestHeaders.Add("X-API-Key", apiKey);
         });
+    
         services
-            .AddSingleton<IGameLogService, GameLogService>()
-            .AddSingleton<IKillEventService, KillEventService>()
-            .AddSingleton<IRefineryJobsService, RefineryJobsService>()
-            .AddSingleton<ISettingsService, SettingsService>()
-            .AddSingleton<IUexCorpService, UexCorpService>()
-            .AddSingleton<IWebScraperService, WebScraperService>();
-
+            .AddScoped<IGameLogService, GameLogService>()        
+            .AddScoped<IKillEventService, KillEventService>()    
+            .AddScoped<IRefineryJobsService, RefineryJobsService>() 
+            .AddScoped<ISettingsService, SettingsService>()     
+            .AddScoped<IUexCorpService, UexCorpService>()        
+            .AddScoped<IWebScraperService, WebScraperService>(); 
 
         return services;
     }

@@ -6,12 +6,12 @@ namespace HWT.Domain.DTOs;
 public class UserProfileDto
 {
     public string Id { get; set; } = string.Empty;
-    public string Username { get; set; } = string.Empty;
+    public string? Username { get; set; } = string.Empty;
     public string DisplayName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
+    public string? Email { get; set; } = string.Empty;
     public string AvatarUrl { get; set; } = string.Empty;
     public string DiscordId { get; set; } = string.Empty;
-    public string DiscordName { get; set; } = string.Empty;
+    public string? DiscordName { get; set; } = string.Empty;
     public List<string> DiscordRoles { get; set; } = new List<string>();
     public DateTime CreatedAt { get; set; }
     public DateTime? LastLoginAt { get; set; }

@@ -1,5 +1,6 @@
 using System.Text;
-using HWT.Application.Interfaces;
+using HWT.Application;
+using HWT.Infrastructure;
 using HWT.Domain.Entities;
 using HWT.Domain.Services;
 using HWT.Infrastructure.Persistence;
@@ -9,8 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
-
 using Serilog;
 using Serilog.Events;
 
@@ -25,6 +24,11 @@ builder.Host.UseSerilog();
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add layered services
+builder.Services
+    .AddApplication()
+    .AddInfrastructure(builder.Configuration);
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -86,7 +90,6 @@ builder.Services.AddAuthentication(options =>
         RequireExpirationTime = true
     };
     
-    // Add custom event handlers for better error handling
     options.Events = new JwtBearerEvents
     {
         OnAuthenticationFailed = context =>
@@ -108,24 +111,21 @@ builder.Services.AddAuthentication(options =>
 // Authorization
 builder.Services.AddAuthorization(options =>
 {
-    // Add custom authorization policies here when you implement RBAC
     options.AddPolicy("RequireAuthenticatedUser", policy =>
         policy.RequireAuthenticatedUser());
 });
 
-// Custom Services
+// API-specific services (not in other layers)
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IDiscordService, DiscordService>();
+builder.Services.AddHttpClient<IDiscordBotService, DiscordBotService>();
+builder.Services.AddScoped<IDiscordBotService, DiscordBotService>();
+
 builder.Services.AddHttpClient<IDiscordService, DiscordService>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(30);
     client.DefaultRequestHeaders.Add("User-Agent", "PackTracker/1.0");
 });
-
-builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IDiscordService, DiscordService>();
-builder.Services.AddHttpClient<IDiscordBotService, DiscordBotService>();
-builder.Services.AddScoped<IDiscordBotService, DiscordBotService>();
-builder.Services.AddScoped<IGameLogService, GameLogService>();
-builder.Services.AddScoped<IKillEventService, KillEventService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
@@ -139,12 +139,12 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-// CORS (if you need it for frontend)
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000") // Add your frontend URLs
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -152,11 +152,7 @@ builder.Services.AddCors(options =>
 });
 
 // Controllers & API
-builder.Services.AddControllers(options =>
-{
-    // Add custom model binding or filters here if needed
-});
-
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 // Swagger/OpenAPI
@@ -174,7 +170,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // JWT Bearer token support in Swagger
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -199,21 +194,13 @@ builder.Services.AddSwaggerGen(options =>
             Array.Empty<string>()
         }
     });
-
-    // Include XML comments if you have them
-    // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    // options.IncludeXmlComments(xmlPath);
 });
 
-// Health checks (optional but recommended)
+// Health checks
 builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
+    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty)
     .AddCheck("discord-api", () => 
-    {
-        // Simple health check - you can make this more sophisticated
-        return Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("Discord API connection available");
-    });
+        Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy("Discord API connection available"));
 
 var app = builder.Build();
 
@@ -231,29 +218,21 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // Production error handling
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
-// CORS (if enabled)
 app.UseCors("AllowFrontend");
-
-// Session must come before Authentication
 app.UseSession();
-
-// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Request logging
 app.UseSerilogRequestLogging(options =>
 {
     options.MessageTemplate =
         "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-    options.GetLevel = (httpContext, elapsed, ex) => ex != null
+    options.GetLevel = (httpContext, _, ex) => ex != null
         ? LogEventLevel.Error
         : httpContext.Response.StatusCode > 499
             ? LogEventLevel.Error
@@ -261,25 +240,29 @@ app.UseSerilogRequestLogging(options =>
     
     options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
     {
-        diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
+        if (httpContext.Request.Host.Value != null)
+            diagnosticContext.Set("RequestHost", httpContext.Request.Host.Value);
         diagnosticContext.Set("RequestScheme", httpContext.Request.Scheme);
-        diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].FirstOrDefault());
+        diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].FirstOrDefault() ?? string.Empty);
         
         if (httpContext.User.Identity?.IsAuthenticated == true)
         {
-            diagnosticContext.Set("UserId", httpContext.User.FindFirst("user_id")?.Value);
-            diagnosticContext.Set("DiscordId", httpContext.User.FindFirst("discord_id")?.Value);
+            var value = httpContext.User.FindFirst("user_id")?.Value;
+            if (value != null)
+            {
+                diagnosticContext.Set("UserId", value);
+                var s = httpContext.User.FindFirst("discord_id")?.Value;
+                if (s != null)
+                    diagnosticContext.Set("DiscordId", s);
+            }
         }
     };
 });
 
-// Health checks endpoint
 app.MapHealthChecks("/health");
-
-// Controllers
 app.MapControllers();
 
-// Ensure database is created and migrations are applied (development only)
+// Database migrations (development only)
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
@@ -287,12 +270,7 @@ if (app.Environment.IsDevelopment())
     
     try
     {
-        // Apply pending migrations
         context.Database.Migrate();
-        
-        // Seed initial data if needed
-        // await SeedDataAsync(scope.ServiceProvider);
-        
         Log.Information("Database migrations applied successfully");
     }
     catch (Exception ex)
@@ -306,26 +284,3 @@ Log.Information("Environment: {Environment}", app.Environment.EnvironmentName);
 Log.Information("Discord Client ID: {ClientId}", builder.Configuration["Authentication:Discord:ClientId"]);
 
 app.Run();
-
-// Optional: Seed data method (uncomment and implement if needed)
-/*
-static async Task SeedDataAsync(IServiceProvider serviceProvider)
-{
-    using var scope = serviceProvider.CreateScope();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    
-    // Create default roles
-    var roles = new[] { "Admin", "User", "FleetCommander" };
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
-    }
-    
-    // Create default admin user if needed
-    // Implementation depends on your requirements
-}
-*/
