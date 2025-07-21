@@ -40,29 +40,13 @@ public class AuthController : ControllerBase
     [HttpGet("discord/login")]
     public IActionResult DiscordLogin([FromQuery] string? returnUrl = null)
     {
-        try
-        {
-            var state = Guid.NewGuid().ToString();
-            
-            // Store state and returnUrl in session for validation
-            HttpContext.Session.SetString("discord_oauth_state", state);
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                HttpContext.Session.SetString("discord_return_url", returnUrl);
-            }
+        var state = Guid.NewGuid().ToString();
+        HttpContext.Session.SetString("discord_oauth_state", state);
+        if (!string.IsNullOrEmpty(returnUrl))
+            HttpContext.Session.SetString("discord_return_url", returnUrl);
 
-            var authUrl = _discordService.GetAuthorizationUrl(state);
-            
-            _logger.LogInformation("Discord login initiated with state: {State}", state);
-            
-            return Redirect(authUrl);
-            
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to initiate Discord login");
-            return BadRequest(new { error = "Failed to initiate Discord login" });
-        }
+        var authUrl = _discordService.GetAuthorizationUrl(state);
+        return Redirect(authUrl);
     }
 
     /// <summary>

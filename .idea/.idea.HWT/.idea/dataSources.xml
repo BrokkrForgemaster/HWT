@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="packTracker@ep-misty-lab-aefnvhul-pooler.c-2.us-east-2.aws.neon.tech" uuid="fbbf152f-35f6-4cc4-a1c8-2d7990d64634">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ep-misty-lab-aefnvhul-pooler.c-2.us-east-2.aws.neon.tech:5432/packTracker</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

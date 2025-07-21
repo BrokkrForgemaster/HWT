@@ -69,9 +69,11 @@ namespace HWT.Infrastructure.Persistence
             // ApplicationUser
             builder.Entity<ApplicationUser>(entity =>
             {
-                // Don't override the primary key - Identity uses Id, not UserId
-                entity.HasIndex(e => e.DiscordId).IsUnique();
-                entity.Property(e => e.DiscordId).IsRequired().HasMaxLength(50);
+                entity.HasIndex(u => u.DiscordId).IsUnique(false);
+
+                entity.Property(u => u.DiscordId)
+                    .HasMaxLength(50)
+                    .IsRequired(false);
                 entity.Property(e => e.DiscordName).HasMaxLength(100);
                 entity.Property(e => e.DiscordDiscriminator).HasMaxLength(10);
                 entity.Property(e => e.DiscordAvatar).HasMaxLength(200);

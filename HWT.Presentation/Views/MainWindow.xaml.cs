@@ -1,101 +1,131 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System.Net.Http;
 using HWT.Application.Interfaces;
-using HWT.Application.Services;
+using HWT.Domain.Entities;
+using HWT.Presentation.Controls;
+using Microsoft.Extensions.Configuration;
 
-namespace HWT.Presentation.Views;
-
-public partial class MainWindow : Window
+namespace HWT.Presentation.Views
 {
-    private readonly DispatcherTimer _clockTimer;
-    private readonly INavigationService _nav;
-    private readonly UpdateService _updater = new();
-
-
-    public MainWindow(INavigationService nav)
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        _nav = nav;
-        _nav.Initialize(ContentFrame);
-        _nav.Navigate("Dashboard");
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IConfiguration _configuration;
 
-        _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-        _clockTimer.Tick += (s, e) =>
+        public MainWindow(IServiceProvider serviceProvider, IConfiguration configuration)
         {
-            var now = DateTime.Now;
-            TxtLocalTime.Text = now.ToString("MM/dd/yyyy") + "\n" + now.ToString("h:mm:ss tt");
-        };
-        _clockTimer.Start();
-        
-        Loaded += async (_, __) =>
+            InitializeComponent();
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            NavigateToDashboard();
+        }
+
+        private void Navigate_Click(object sender, RoutedEventArgs e)
         {
-            // As soon as the window finishes loading, trigger a check:
-            bool updated = await _updater.TryUpdateAsync( (pct, status) =>
+            if (sender is Button btn && btn.Tag is string tag)
             {
-                Dispatcher.Invoke(() =>
+                switch (tag)
                 {
-                    UpdateProgressBar.Value = pct;
-                    UpdateStatusText.Text = status;
-                });
-            });
-            if (updated)
-            {
-                MessageBox.Show(
-                    "An update was found and installed. Please restart the app.",
-                    "Update Applied",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                    case "Dashboard":
+                        NavigateToDashboard();
+                        break;
+                    case "Kill Tracker":
+                        NavigateToKillTracker();
+                        break;
+                    case "Industry Tracker":
+                        NavigateToIndustryTracker();
+                        break;
+                    case "Settings":
+                        NavigateToSettings();
+                        break;
+                }
             }
-        };
-    }
+        }
 
-    private void Navigate_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is string viewName)
-            _nav.Navigate(viewName);
-    }
-    
-    private async void UpdateButton_Click(object sender, RoutedEventArgs e)
-    {
-        UpdateProgressBar.Visibility = Visibility.Visible;
-        UpdateStatusText.Visibility   = Visibility.Visible;
-        UpdateButton.IsEnabled  = false;
+        private void NavigateToDashboard()
+        {
+            var scraper = _serviceProvider.GetRequiredService<IWebScraperService>();
+            var logger = _serviceProvider.GetRequiredService<ILogger<DashboardView>>();
+            var newsFeedLogger = _serviceProvider.GetRequiredService<ILogger<NewsFeedItemControl>>();
 
-        UpdateProgressBar.Value      = 0;
-        UpdateStatusText.Text        = "Checking for updates…";
-        
-        bool updated = await _updater.TryUpdateAsync((pct, status) =>
+            var dashboardView = new DashboardView(scraper, logger, newsFeedLogger);
+            ContentFrame.Navigate(dashboardView);
+        }
+
+        private void NavigateToKillTracker()
         {
-            Dispatcher.Invoke(() =>
-            {
-                UpdateProgressBar.Value     = pct;
-                UpdateStatusText.Text       = status;
-            });
-        });
-        
-        UpdateProgressBar.Visibility = Visibility.Collapsed;
-        UpdateStatusText.Visibility   = Visibility.Collapsed;
-        UpdateButton.IsEnabled = true;
-        UpdateProgressBar.Value = 0;
-        UpdateStatusText.Text = string.Empty;
-        if (updated)
+            var killEvents = _serviceProvider.GetRequiredService<IKillEventService>();
+            var logService = _serviceProvider.GetRequiredService<IGameLogService>();
+            var settings = _serviceProvider.GetRequiredService<ISettingsService>();
+            var logger = _serviceProvider.GetRequiredService<ILogger<KillTracker>>();
+
+            var killTrackerView = new KillTracker(killEvents, logService, settings, logger);
+            ContentFrame.Navigate(killTrackerView);
+        }
+
+        private void NavigateToIndustryTracker()
         {
-            UpdateStatusText.Text = "Relaunching…";
-            var exe = Process.GetCurrentProcess().MainModule!.FileName;
-            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true });
+            var uexService = _serviceProvider.GetRequiredService<IUexCorpService>();
+            var logger = _serviceProvider.GetRequiredService<ILogger<LocopsView>>();
+            var httpClient = _serviceProvider.GetRequiredService<HttpClient>();
+            var configuration = _serviceProvider.GetRequiredService<IConfiguration>();
+
+            var industryView = new LocopsView(uexService, logger, httpClient, configuration);
+            ContentFrame.Navigate(industryView);
+        }
+
+        private void NavigateToSettings()
+        {
+            var settingsOptions = _serviceProvider.GetRequiredService<IOptions<AppSettings>>();
+            var themeManager = _serviceProvider.GetRequiredService<IThemeManager>();
+            var navigationService = _serviceProvider.GetRequiredService<INavigationService>();
+            var logger = _serviceProvider.GetRequiredService<ILogger<SettingsForm>>();
+            var settingsService = _serviceProvider.GetRequiredService<ISettingsService>();
+
+            var settingsView = new SettingsForm(settingsOptions, themeManager, navigationService, logger, settingsService);
+            ContentFrame.Navigate(settingsView);
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
             System.Windows.Application.Current.Shutdown();
         }
-        else
+
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateStatusText.Text = "Already up to date.";
-            await Task.Delay(1500);
-            UpdateProgressBar.Visibility = Visibility.Collapsed;
-            UpdateStatusText.Visibility  = Visibility.Collapsed;
-            UpdateButton.IsEnabled = true;
+            try
+            {
+                UpdateButton.IsEnabled = false;
+                UpdateProgressBar.Visibility = Visibility.Visible;
+                UpdateStatusText.Visibility = Visibility.Visible;
+                UpdateStatusText.Text = "Updating...";
+
+                // Simulate update process (replace with your actual update logic)
+                for (int i = 0; i <= 100; i += 10)
+                {
+                    UpdateProgressBar.Value = i;
+                    await Task.Delay(200);
+                }
+
+                UpdateStatusText.Text = "Update completed!";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Update failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                UpdateStatusText.Text = "Update failed.";
+            }
+            finally
+            {
+                UpdateProgressBar.Visibility = Visibility.Collapsed;
+                UpdateButton.IsEnabled = true;
+            }
         }
     }
-    private void Exit_Click(object sender, RoutedEventArgs e) => Close();
-
 }

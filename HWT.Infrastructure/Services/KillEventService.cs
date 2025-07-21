@@ -68,7 +68,7 @@ public class KillEventService : IKillEventService, IDisposable
 
             try
             {
-                _logger.LogInformation("Attempting to log kill to Google Sheets...");
+                _logger.LogInformation("Attempting to log kill to API...");
                 
                 var killDto = new KillDto
                 {
@@ -80,7 +80,7 @@ public class KillEventService : IKillEventService, IDisposable
                     Location = entry.Summary
                 };
                 
-                var response = await _httpClient.PostAsJsonAsync("/api/kills", killDto);
+                var response = await _httpClient.PostAsJsonAsync("/api/Kill/sync", killDto);
                 
                 if (response.IsSuccessStatusCode)
                 {

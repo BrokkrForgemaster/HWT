@@ -1,5 +1,6 @@
 using System.Text;
 using HWT.Application;
+using HWT.Application.Interfaces;
 using HWT.Infrastructure;
 using HWT.Domain.Entities;
 using HWT.Domain.Services;
@@ -25,11 +26,15 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
 // Add layered services
 builder.Services
-    .AddApplication()
     .AddInfrastructure(builder.Configuration);
-
+builder.Services.AddHttpClient<IKillEventService, KillEventService>(client =>
+{
+    string apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+    client.BaseAddress = new Uri("https://" + apiBaseUrl);
+});
 // Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -125,6 +130,12 @@ builder.Services.AddHttpClient<IDiscordService, DiscordService>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(30);
     client.DefaultRequestHeaders.Add("User-Agent", "PackTracker/1.0");
+});
+
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+builder.Services.AddHttpClient<IKillEventService, KillEventService>(client =>
+{
+    if (apiBaseUrl != null) client.BaseAddress = new Uri(apiBaseUrl);
 });
 
 builder.Services.AddDistributedMemoryCache();

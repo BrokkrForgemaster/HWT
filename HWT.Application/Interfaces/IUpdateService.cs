@@ -8,6 +8,6 @@ namespace HWT.Application.Interfaces
     public interface IUpdateService
     {
         Task<bool> IsUpdateAvailableAsync();
-        Task<bool> TryUpdateAsync(Action<double, string> reportProgress);
+        Task ApplyUpdateAsync(Action<double, string>? reportProgress = null);
     }
 }

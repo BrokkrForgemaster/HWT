@@ -12,14 +12,14 @@ namespace HWT.Domain.Entities;
 public class ApplicationUser : IdentityUser
 {
     public Guid UserId { get; set; } = Guid.NewGuid();
-    
+
     // Discord-related properties
-    public string DiscordId { get; set; } = string.Empty;
+    public string? DiscordId { get; set; }  // Made nullable
     public string? DiscordName { get; set; } = string.Empty;
     public string? DiscordDiscriminator { get; set; } = string.Empty;
     public string? DiscordAvatar { get; set; } = string.Empty;
-    public string DiscordAccessToken { get; set; } = string.Empty;
-    public string DiscordRefreshToken { get; set; } = string.Empty;
+    public string? DiscordAccessToken { get; set; } = string.Empty;
+    public string? DiscordRefreshToken { get; set; } = string.Empty;
     public string? DiscordRoles { get; set; } = string.Empty;
     public DateTime? DiscordTokenExpiresAt { get; set; } = null;
     

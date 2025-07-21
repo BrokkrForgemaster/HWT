@@ -25,9 +25,12 @@ public class DiscordService : IDiscordService
 
     public string GetAuthorizationUrl(string state)
     {
-        var clientId = _configuration["Authentication:Discord:ClientId"];
-        var redirectUri = _configuration["Authentication:Discord:RedirectUri"] ?? 
-                         "https://localhost:5001/api/auth/discord/callback";
+        var clientId = _configuration["ClientId"];
+        var redirectUri = _configuration["RedirectUri"];
+        if (string.IsNullOrEmpty(redirectUri))
+        {
+            throw new InvalidOperationException("Discord RedirectUri is not configured");
+        }
         var scope = "identify email";
 
         if (string.IsNullOrEmpty(clientId))
@@ -48,10 +51,10 @@ public class DiscordService : IDiscordService
 
     public async Task<DiscordTokenResponse> ExchangeCodeForTokenAsync(string code)
     {
-        var clientId = _configuration["Authentication:Discord:ClientId"];
-        var clientSecret = _configuration["Authentication:Discord:ClientSecret"];
-        var redirectUri = _configuration["Authentication:Discord:RedirectUri"] ?? 
-                         "https://localhost:5001/api/auth/discord/callback";
+        var clientId = _configuration["ClientId"];
+        var clientSecret = _configuration["ClientSecret"];
+        var redirectUri = _configuration["RedirectUri"];
+   
 
         if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
         {
@@ -150,8 +153,8 @@ public class DiscordService : IDiscordService
 
     public async Task<DiscordTokenResponse> RefreshTokenAsync(string refreshToken)
     {
-        var clientId = _configuration["Authentication:Discord:ClientId"];
-        var clientSecret = _configuration["Authentication:Discord:ClientSecret"];
+        var clientId = _configuration["ClientId"];
+        var clientSecret = _configuration["ClientSecret"];
 
         if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
         {

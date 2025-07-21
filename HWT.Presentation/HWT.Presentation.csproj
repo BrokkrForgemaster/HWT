@@ -6,6 +6,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="cpprobr.squirrel.windows" Version="2.1.4" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.69.0.3785" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.7" />
@@ -134,9 +135,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-      <AssemblyVersion>0.1.4.0</AssemblyVersion>
-      <FileVersion>0.1.4.0</FileVersion>
+      <AssemblyVersion>0.1.5.0</AssemblyVersion>
+      <FileVersion>0.1.5.0</FileVersion>
       <PackageVersion>0.1.4.0</PackageVersion>
+    <UserSecretsId>0c14db6b-1273-4d7a-8f62-14b9fd8a6c7b</UserSecretsId>
   </PropertyGroup>
 
 </Project>

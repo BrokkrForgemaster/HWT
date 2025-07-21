@@ -9,7 +9,7 @@
                       CanContentScroll="True">
 
             <DockPanel LastChildFill="True" Margin="20">
-                <TextBlock Text="📡 Star Citizen News Feed"
+                <TextBlock Text=""
                            FontSize="24"
                            FontWeight="Bold"
                            Foreground="White"
