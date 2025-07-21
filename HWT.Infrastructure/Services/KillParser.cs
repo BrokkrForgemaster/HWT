@@ -28,17 +28,29 @@ public static class KillParser
     }
 
     /// <summary name="ClassifyKill">
-    /// Classifies the type of kill based on the weapon class used.
+    /// Classifies the type of kill based on the weapon class used,
+    /// damage type, and zone information.
     /// </summary>
-    private static string ClassifyKill(string weaponClass)
+    private static string ClassifyKill(string weaponClass, string damageType, string zone)
     {
         var wc = weaponClass.ToLowerInvariant();
+        var dt = damageType.ToLowerInvariant();
+        var zn = zone.ToLowerInvariant();
+
         if (wc.Contains("rifle") || wc.Contains("pistol") || wc.Contains("sniper") ||
             wc.Contains("laser") || wc.Contains("ballistic") || wc.Contains("knife"))
             return "FPS";
 
         if (wc.Contains("turret") || wc.Contains("gatling") || wc.Contains("gimbal") ||
             wc.Contains("missile") || wc.Contains("ship") || wc.Contains("cannon"))
+            return "Air";
+
+        // Use damage type as fallback
+        if (dt.Contains("vehicledestruction") || dt.Contains("vehicle"))
+            return "Air";
+
+        // Use zone info as fallback (common vehicle names)
+        if (zn.Contains("hornet") || zn.Contains("f7c") || zn.Contains("scythe") || zn.Contains("mosquito"))
             return "Air";
 
         return "Unknown";
@@ -60,6 +72,8 @@ public static class KillParser
             var weaponMatch = Regex.Match(line, @"using\s+'([^']+)'\s+\[Class\s+([^\]]+)\]");
             var weaponClass = weaponMatch.Success ? weaponMatch.Groups[2].Value.Trim() : "Unknown";
             var timestamp = Regex.Match(line, @"<(\d{4}-\d{2}-\d{2}T[^>]+)>").Groups[1].Value;
+            var damageType = Regex.Match(line, @"damage type '([^']+)'").Groups[1].Value.Trim();
+            var zone = Regex.Match(line, @"in zone '([^']+)'").Groups[1].Value.Trim();
 
             if (string.IsNullOrEmpty(attacker) || string.IsNullOrEmpty(target))
             {
@@ -73,7 +87,7 @@ public static class KillParser
                 return null;
             }
 
-            var type = ClassifyKill(weaponClass);
+            var type = ClassifyKill(weaponClass, damageType, zone);
 
             return new KillEntry
             {

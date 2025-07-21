@@ -1,16 +1,16 @@
 ; ---------------------------------------------------------------------------
 ; HouseWolfInstaller.iss
 ; ---------------------------------------------------------------------------
-#define MyAppName        "House Wolf App"
-#define MyAppVersion     "0.1.3"
+#define MyAppName        "Pack Tracker"
+#define MyAppVersion     "0.1.5"
 #define MyAppPublisher   "House Wolf Org"
 #define MyAppExeName     "HWT.Presentation.exe"
-#define InstallerIcon    "Icons\installer.ico"
-#define DesktopIcon      "Icons\app-desktop.ico"
+#define InstallerIcon    "Icons/installer.ico"
+#define DesktopIcon      "Icons/app-desktop.ico"
 
 [Setup]
 ; Unique ID—generate a new GUID for your real installer.
-AppId={{7B9A5E4F-A8C3-4D2D-9F14-1234567890AB}
+AppId={{7B9A5E4F-A8C3-4D2D-9F14-1234567890AB}}  ; <-- Added missing closing brace
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -38,7 +38,7 @@ Source: "..\HWT.Presentation\bin\Release\net9.0-windows\win-x64\*"; \
   DestDir: "{app}"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
 
-; Also copy your desktop‐shortcut icon into the install dir (so Inno can reference it later):
+; Also copy your desktop shortcut icon into the install dir (so Inno can reference it later):
 Source: "{#DesktopIcon}"; DestDir: "{app}"; Flags: ignoreversion
 
 ; ---------------------------------------------------------------------------
@@ -54,14 +54,14 @@ Name: "desktopicon"; \
 ; Icons: start menu & desktop shortcuts
 ; ---------------------------------------------------------------------------
 [Icons]
-; Start‐menu shortcut
- Name: "{group}\{#MyAppName}"; \
+; Start-menu shortcut
+Name: "{group}\{#MyAppName}"; \
   Filename: "{app}\{#MyAppExeName}"; \
   WorkingDir: "{app}"; \
   IconFilename: "{app}\installer.ico"
 
 ; Desktop shortcut (only if user checks the box)
- Name: "{commondesktop}\{#MyAppName}"; \
+Name: "{commondesktop}\{#MyAppName}"; \
   Filename: "{app}\{#MyAppExeName}"; \
   Tasks: desktopicon; \
   WorkingDir: "{app}"; \

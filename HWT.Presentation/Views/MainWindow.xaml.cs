@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Net.Http;
+using System.Windows.Threading;
 using HWT.Application.Interfaces;
 using HWT.Domain.Entities;
 using HWT.Presentation.Controls;
@@ -18,12 +19,18 @@ namespace HWT.Presentation.Views
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
+        private readonly DispatcherTimer _timer;
 
         public MainWindow(IServiceProvider serviceProvider, IConfiguration configuration)
         {
             InitializeComponent();
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            _timer.Start();
             NavigateToDashboard();
         }
 

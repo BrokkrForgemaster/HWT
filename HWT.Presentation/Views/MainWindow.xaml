@@ -2,6 +2,7 @@
 <Window x:Class="HWT.Presentation.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime"
         Title="House Wolf App"
         Height="1080" Width="1920"
         Background="{DynamicResource MainBackground}"
@@ -93,12 +94,13 @@
             VerticalAlignment="Stretch">
       <DockPanel LastChildFill="True" Margin="16">
         <TextBlock x:Name="TxtLocalTime"
+                   Text="{Binding Source={x:Static System:DateTime.Now}, StringFormat='{}{0:MMMM d, yyyy}&#x0a;     {0:HH:mm:ss}'}"
                    DockPanel.Dock="Bottom"
                    FontSize="14"
                    FontWeight="Bold"
                    Foreground="LightGray"
                    HorizontalAlignment="Center"
-                   Margin="0,8,0,0" />
+                   Margin="0,8,0,5" />
 
         <!-- Time & Update Controls -->
         <StackPanel Orientation="Vertical" Margin="10" DockPanel.Dock="Bottom">
